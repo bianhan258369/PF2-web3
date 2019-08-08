@@ -1,0 +1,123 @@
+<div class="all">
+	<ul>
+		<li class="title">&nbsp;Process of scenario based projection
+			<div class="content">
+				<ul class="content">
+					<li>&nbsp;Step 1:Read the problem diagram</li>
+					<li>&nbsp;Step 2:Construct the scenario graphs
+						<ul>
+							<li>2.1:Draw scenario graph.</li>
+							<li>2.2:Check the correctness and integrity of the scenario graph.</li>
+						</ul>
+					</li>
+					<li>&nbsp;Step 3:Perform the problem projection
+						<ul>
+							<li>3.1:Check well-formed scenario.</li>
+							<li>3.2:Perform projection.</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</li><br>
+		<button>NEXT</button>
+		<li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Diagram</li>
+		<ng-template #elseOpen1>
+			<li (click)="setOpen1()" class="title">&nbsp;-  Diagram</li>
+			<div class="content">
+				<table *ngIf="open1" class="content">Information</table>
+			</div>
+		</ng-template>
+		<li *ngIf="!open2;else elseOpen2" (click)="setOpen2()" class="title">&nbsp;+  Phenomenon</li>
+		<ng-template #elseOpen2>
+			<li (click)="setOpen2()" class="title">&nbsp;-  Phenomenon</li>
+			<div class="content">
+				<table *ngIf="open2" class="content">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>PheType</th>
+					</tr>
+				</table>	
+			</div>
+		</ng-template>
+		<li *ngIf="!open3;else elseOpen3" (click)="setOpen3()" class="title">&nbsp;+  Interaction</li>
+		<ng-template #elseOpen3>
+			<li (click)="setOpen3()" class="title">&nbsp;-  Interaction</li>
+			<div class="content">
+				<table *ngIf="open3" class="content">
+					<tr>
+						<th>Name</th>
+						<th>Initiator</th>
+						<th>Receiver</th>
+						<th>Content</th>
+					</tr>
+				</table>
+			</div>
+		</ng-template>
+		<li *ngIf="!open4;else elseOpen4" (click)="setOpen4()" class="title">&nbsp;+  Reference</li>
+		<ng-template #elseOpen4>
+			<li (click)="setOpen4()" class="title">&nbsp;-  Reference</li>
+			<div class="content">
+				<table *ngIf="open4" class="content">
+					<tr>
+						<th>Name</th>
+						<th>Initiator</th>
+						<th>Receiver</th>
+						<th>Content</th>
+						<th>RefType</th>
+					</tr>
+				</table>
+			</div>
+		</ng-template>
+		<li *ngIf="!open5;else elseOpen5" (click)="setOpen5()" class="title">&nbsp;+  PD Information</li>
+		<ng-template #elseOpen5>
+			<li (click)="setOpen5()" class="title">&nbsp;-  PD Information</li>
+			<div class="content">
+				<table *ngIf="open5" class="content">Information</table>
+			</div>
+		</ng-template>
+	</ul>
+	<!-- <div>
+		<fieldset (click)="setOpen1()" class="title">Diagram</fieldset>
+		<p *ngIf="open1" class="content">Information</p>
+	</div>
+	<div>
+		<h3 (click)="setOpen2()" class="title">Phenomenon</h3>
+		<table *ngIf="open2" class="content">
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>PheType</th>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<span (click)="setOpen3()">Interaction</span>
+		<table *ngIf="open3" class="content">
+			<tr>
+				<th>Name</th>
+				<th>Initiator</th>
+				<th>Receiver</th>
+				<th>Content</th>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<span (click)="setOpen4()">Reference</span>
+		
+		<table *ngIf="open4" class="content">
+			<tr>
+				<th>Name</th>
+				<th>Initiator</th>
+				<th>Receiver</th>
+				<th>Content</th>
+				<th>RefType</th>
+			</tr>
+		</table>
+	</div>
+	<div>
+		<span (click)="setOpen5()">PD Information</span>
+		<p *ngIf="open5" class="content">Information</p>
+	</div> -->
+</div>
+

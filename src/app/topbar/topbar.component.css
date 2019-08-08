@@ -1,0 +1,89 @@
+div{
+	position: absolute;
+	float:top;
+	top:0;
+	/* left: 6%; */
+	width:100%;
+	height:12.2%;
+	background: #1874CD;
+	text-align:center;
+	/* margin:0 auto; */
+	/* align-items: center; */
+	
+}
+.tab{
+	position: relative;
+	background: white;
+	top:74.5%;
+	width: 100%;
+	height:25%;
+	color:black;
+}
+button{
+	margin:3% 0% 3% 0%;/*上右下左*/
+	display: block;
+    text-align: center;
+    text-decoration: none;
+	width: 150px;
+	border:none;
+	/* height: 30px; */
+	/* line-height: 30px; */
+    color: white ;
+	background: #1874CD;
+}
+nav{
+	position: relative;
+	float:left;
+	/* margin-left:50px; */
+	/* position: relative; */
+	position: absolute;
+	/* margin:0; */
+	top:30%; 
+	left:6%;
+	margin:0 auto;
+	/* margin:0% 10% 0% 10%;上右下左 */
+	/* margin-left: auto;
+	margin-right: auto; */
+}
+img{
+	position: relative;
+	top:5%;
+	left: 0.2%;
+	float:left;
+	width: 5.5%;
+	/* height: 100%; */
+}
+ul{
+    padding: 0;
+	margin: 0;
+	height: 30px;
+    list-style-type: none;
+}
+ul li{
+    float: left;
+	position: relative;
+	color: white;
+}
+ul li a,ul li a:visited{
+	margin:3% 0% 3% 0%;/*上右下左*/
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    width: 150px;
+	/* height: 30px; */
+	/* line-height: 30px; */
+    color: white ;
+	/* background: #1874CD; */
+}
+ul li:hover a{          
+	opacity: 0.5;        
+    /* color: 	#00FF7F; */
+	/* background: lavender; */
+	/* font-weight:bold; */
+	/* text-transform:uppercase; */
+}
+.tablabel{
+	position: relative;
+	left:1%;
+	color: black;
+}

@@ -1,0 +1,55 @@
+div{
+	background:white;
+	position: absolute;
+	top:9.1%;
+	left:6%;
+	width:77%;
+	height:91%;
+	float: center;
+}
+ul,li{
+	margin:0px;
+	padding:0px;
+}
+.tab{
+	position: relative;
+	top:0%;
+	left:0;
+	width:100%;
+	height:3.4%;
+	background:white;
+}
+ul li{
+	position: relative;
+	/* margin:0% 0.1% 0% 0%;иосробвС */
+	min-width: 3%;
+	height: 28px;
+	/* border:30px; */
+	text-align:center;
+	list-style-type:none;
+	float:left;
+	display: block;
+	background: whitesmoke;
+}
+ul li:hover{
+	opacity: 0.5;      
+	display: block;
+}
+.content{
+	position: relative;
+	top:0;
+	left:0;
+	width:100%;
+	height:96.5%;
+	float:left;
+	display:block;
+}
+#content1{
+	display:block;
+}
+#content2{
+	display:none;
+}
+#content3{
+	display:none;
+}

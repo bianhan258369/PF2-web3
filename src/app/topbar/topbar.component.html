@@ -1,0 +1,16 @@
+<body>
+	<div>
+		<img src="assets/icons/3.png">
+		<nav>
+		<ul>	
+			<li><button type="button" class="topbar" id="open" (click) = 'showPhenomenon()'>Open</button></li>
+			<li><button type="button" class="topbar">Open</button></li>
+			<li><button type="button" class="topbar">Open</button></li>
+			<li><a href="#Help">Help</a> </li>
+			<li><input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>
+			<li><button (click)="uploadFile()">点击上传</button></li>
+		</ul>
+		</nav>
+		<div class="tab"></div>
+	</div> 
+</body>
