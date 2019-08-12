@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload'
-import { ServiceService} from '../service.service'
-import { Phenomenon } from '../phenomenon';
+import { ServiceService} from '../service/service.service'
+import { Phenomenon } from '../class/Phenomenon';
 
 
 @Component({
@@ -11,10 +11,12 @@ import { Phenomenon } from '../phenomenon';
 })
 export class TopbarComponent implements OnInit {
   phenomena : Array<Phenomenon>;
+  diagramCount : number;
   constructor(private service:ServiceService) { }
 
   ngOnInit() {
     this.getPhenomenon();
+    this.getDiagramCount();
   }
 
   uploader:FileUploader = new FileUploader({
@@ -48,7 +50,17 @@ export class TopbarComponent implements OnInit {
     });
   }
 
+  getDiagramCount() : void{
+    this.service.getDiagramCount().subscribe(data => {
+      this.diagramCount = data;
+    })
+  }
+
   showPhenomenon() : void{
     for(let i = 0;i < this.phenomena.length;i++) console.log(this.phenomena[i].name);
+  }
+
+  showDiagramCount() : void{
+    console.log(this.diagramCount);
   }
 }

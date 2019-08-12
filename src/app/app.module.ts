@@ -9,7 +9,7 @@ import { DrawingboardComponent } from './drawingboard/drawingboard.component';
 import { FileUploadModule } from 'ng2-file-upload'
 import {CommonModule} from '@angular/common'
 import { HttpClientModule }    from '@angular/common/http';
-import { ServiceService } from './service.service'
+import { ServiceService } from './service/service.service'
 
 @NgModule({
   declarations: [
