@@ -50,8 +50,6 @@ export class DrawingboardComponent implements OnInit {
 				let d = $("#content" + (i + 1));
 				let wid = d.width();
 				let hei =d.height();
-				console.log(wid);
-				console.log(hei);
 				this.papers[i] = new joint.dia.Paper({
 					el: $("#content" +  (i + 1)),
 					width:wid,
