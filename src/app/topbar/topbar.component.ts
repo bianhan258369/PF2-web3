@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload'
 import { ServiceService} from '../service/service.service'
-import { Phenomenon } from '../class/Phenomenon';
+import { Phenomenon } from '../entity/Phenomenon';
 
 
 @Component({
@@ -10,13 +10,12 @@ import { Phenomenon } from '../class/Phenomenon';
   styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent implements OnInit {
+  interval;
   phenomena : Array<Phenomenon>;
   diagramCount : number;
   constructor(private service:ServiceService) { }
 
   ngOnInit() {
-    this.getPhenomenon();
-    this.getDiagramCount();
   }
 
   uploader:FileUploader = new FileUploader({
@@ -25,42 +24,42 @@ export class TopbarComponent implements OnInit {
     itemAlias:"uploadedFiles"
   });
 
-  selectedFileOnChanged(event:any) {
-    for(var i = 0;i<this.uploader.queue.length;i++){
-      console.log(this.uploader.queue[i].file.name);
-    }
+  selectedXMLFileOnChanged(event:any) {
+    this.uploadXMLFile();
   }
 
-  uploadFile(){
+  uploadXMLFile(){
     this.uploader.queue[0].onSuccess = function (response, status, headers) {
       if (status == 200) {
-        let tempRes = response;
-        alert(response);
+        
       } else {
-        alert('上传失败');
+        alert('Failure');
       }
     };
     for(let i = 0;i < this.uploader.queue.length;i++) this.uploader.queue[i].upload();
-    alert('上传之后');
+    var that = this;
+    setTimeout(function(){
+      location.reload(true);
+    },1000);
   }
 
-  getPhenomenon() : void{
-    this.service.getPhenomenonList().subscribe(data =>{
-      this.phenomena = data;
-    });
+  selectedOWLFileOnChanged(event:any) {
+    this.uploadXMLFile();
   }
 
-  getDiagramCount() : void{
-    this.service.getDiagramCount().subscribe(data => {
-      this.diagramCount = data;
-    })
+  uploadOWLFile(){
+    this.uploader.queue[0].onSuccess = function (response, status, headers) {
+      if (status == 200) {
+        
+      } else {
+        alert('Failure');
+      }
+    };
+    for(let i = 0;i < this.uploader.queue.length;i++) this.uploader.queue[i].upload();
+    var that = this;
+    setTimeout(function(){
+      location.reload(true);
+    },1000);
   }
 
-  showPhenomenon() : void{
-    for(let i = 0;i < this.phenomena.length;i++) console.log(this.phenomena[i].name);
-  }
-
-  showDiagramCount() : void{
-    console.log(this.diagramCount);
-  }
 }

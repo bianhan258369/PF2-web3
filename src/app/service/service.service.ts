@@ -1,10 +1,13 @@
 import { Injectable, ErrorHandler } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import { Phenomenon } from '../class/Phenomenon';
-import { Rect } from '../class/Rect';
-import { Line } from '../class/Line';
-import { Oval } from '../class/Oval';
+import { Phenomenon } from '../entity/Phenomenon';
+import { Rect } from '../entity/Rect';
+import { Line } from '../entity/Line';
+import { Oval } from '../entity/Oval';
+import { Diagram } from '../entity/Diagram';
+import { Scenario } from '../entity/Scenario';
+import { Interaction } from '../entity/Interaction';
 
 const httpOptions = {
   headers: new HttpHeaders({'content-Type': 'application/json'})
@@ -20,16 +23,9 @@ export class ServiceService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getPhenomenonList() : Observable<Phenomenon[]>{
-    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getPhenomenonList');
-  }
 
   getDiagramCount() : Observable<number>{
     return this.httpClient.get<number>(this.serviceUrl + '/getDiagramCount');
-  }
-
-  getCount() : Promise<any>{
-    return this.httpClient.get(this.serviceUrl + '/getDiagramCount').toPromise().catch(this.handleError());
   }
 
   getRects(index : number) : Observable<Rect[]>{
@@ -44,10 +40,35 @@ export class ServiceService {
     return this.httpClient.get<Oval[]>(this.serviceUrl + '/getOvalList?index=' + index);
   }
 
+  getPhenomenonList(index : number) : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getPhenomenonList?index=' + index);
+  }
 
-private handleError<T>(operation = 'operation', result?: T) {
-  return (error: any): Observable<T> => {
-    return of(result as T);
-  };
-}
+  getScenarios(index : number) : Observable<Scenario[]>{
+    return this.httpClient.get<Scenario[]>(this.serviceUrl + '/getScenarioList?index=' + index);
+  }
+
+  getInteractions(index : number) : Observable<Interaction[]>{
+    return this.httpClient.get<Interaction[]>(this.serviceUrl + '/getInteractionList?index=' + index);
+  }
+
+  getDiagrams() : Observable<Diagram[]>{
+    return this.httpClient.get<Diagram[]>(this.serviceUrl + '/getDiagramList');
+  }
+
+  getOWLConstrainList() : Observable<string[]>{
+    return this.httpClient.get<string[]>(this.serviceUrl + '/getOWLConstraintList');
+  }
+
+  getAllPhenomenonList() : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllPhenomenonList');
+  }
+
+  getAllReferenceList() : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllReferenceList');
+  }
+
+  getScenarioDiagramByDomainText(index : number, domainText : string) : Observable<Interaction[] | Scenario[]>{
+    return this.httpClient.get<Interaction[] | Scenario[]>(this.serviceUrl + '/getScenarioDiagramByDomain?index=' + index + '&domainText=' + domainText);
+  }
 }

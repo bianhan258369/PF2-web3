@@ -1,16 +1,8 @@
 <div>
 	<div class="tab">
 		<ul>
-			<li id="lm1" (click)="change_Menu(1)">tab1</li>
-			<li id="lm2" (click)="change_Menu(2)">tab2</li>
-			<li id="lm3" (click)="change_Menu(3)">tab3</li>
-			<li id="lm4" (click)="change_Menu(4)">tab4</li>
-			<li id="lm5" (click)="change_Menu(5)">tab5</li>
+			<li *ngFor="let diagram of diagrams;let i = index" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</li>
 		</ul>
-	  </div>
-  	<div class="content" id="content1" ></div>
-  	<div class="content" id="content2"></div>
-	<div class="content" id="content3"></div>
-	<div class="content" id="content4"></div>
-	<div class="content" id="content5"></div>
+	</div>
+	<div *ngFor="let diagram of diagrams;let i = index" class="content" id="content{{i + 1}}"></div>
  </div>

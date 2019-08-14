@@ -6,4 +6,5 @@ export class Line extends Shape{
     from : Shape;
     to : Shape;
     phenomena : Array<Phenomenon>;
+    name : string;
 }

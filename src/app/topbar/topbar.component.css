@@ -31,6 +31,39 @@ button{
     color: white ;
 	background: #1874CD;
 }
+
+.xmlfileinput-button {
+
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+}
+
+.xmlfileinput-button input{
+	
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	opacity: 0;
+	-ms-filter: 'alpha(opacity=0)';
+}
+
+.owlfileinput-button {
+
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+}
+
+.owlfileinput-button input{
+	
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	opacity: 0;
+	-ms-filter: 'alpha(opacity=0)';
+}
+
 nav{
 	position: relative;
 	float:left;
@@ -63,6 +96,7 @@ ul li{
     float: left;
 	position: relative;
 	color: white;
+	width: 150px;
 }
 ul li a,ul li a:visited{
 	margin:3% 0% 3% 0%;/*иосробвС*/
