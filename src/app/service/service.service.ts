@@ -71,4 +71,10 @@ export class ServiceService {
   getScenarioDiagramByDomainText(index : number, domainText : string) : Observable<Interaction[] | Scenario[]>{
     return this.httpClient.get<Interaction[] | Scenario[]>(this.serviceUrl + '/getScenarioDiagramByDomain?index=' + index + '&domainText=' + domainText);
   }
+
+  canAddConstraint(index : number, from : string, to : string, cons : string) : Observable<boolean>{
+    return this.httpClient.get<boolean>(
+      this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons
+      );
+  }
 }

@@ -17,6 +17,7 @@ import { AddconstraintComponent } from './addconstraint/addconstraint.component'
 import { ClockdiagramDetailComponent } from './clockdiagram-detail/clockdiagram-detail.component';
 import { RouterModule, Routes } from '@angular/router';
 import { HelpComponent } from './help/help.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -38,6 +39,7 @@ import { HelpComponent } from './help/help.component';
     AppRoutingModule,
     AppRoutingModule,
     RouterModule,
+    FormsModule,
   ],
   providers: [ServiceService],
   bootstrap: [AppComponent]

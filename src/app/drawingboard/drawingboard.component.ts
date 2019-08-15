@@ -19,6 +19,7 @@ import { stringify } from '@angular/core/src/render3/util';
 import { Kobiton } from 'protractor/built/driverProviders';
 import { type } from 'os';
 import { RouterLink, Router } from '@angular/router';
+
 declare var $:JQueryStatic;
 
 @Component({
@@ -64,19 +65,20 @@ export class DrawingboardComponent implements OnInit {
 		this.phenomena = new Array<Array<Phenomenon>>();
 		this.initColours();
 		this.getDiagramCount();
-		this.getRectList();
+		//this.getRectList();
 		this.getOvalList();
 		this.getLineList();
 		this.getScenarioList();
 		this.getInteractionList();
-		this.getPhenomenonList();
+		//this.getPhenomenonList();
+		this.getRectAndPhenomenonList();
 		this.getDiagramList();
 		
 		var that = this;
 		that.interval = setInterval(function(){
 			clearInterval(that.interval);
 			that.initPapers();
-		},300);
+		},1500);
 		
 	}
 
@@ -95,7 +97,9 @@ export class DrawingboardComponent implements OnInit {
 		if(this.GetObj("content"+index)&&this.GetObj("lm"+index)){
 			this.GetObj("content"+index).style.display = 'block';
 			if(index <= this.diagramCount)this.showClockDiagrams(index - 1);
-			else this.showTimingDiagrams(index - 1);
+			else{
+				this.showTimingDiagrams(index - 1);
+			} 
 		}
 	}
 
@@ -116,6 +120,15 @@ export class DrawingboardComponent implements OnInit {
 		this.colours[12] = '#7B7B7B';
 		this.colours[13] = '#336666';
 		this.colours[14] = '#FFB5B5';
+	}
+
+	showConstraintDialog() : void{
+		for(let i = 0;i < this.graphs.length;i++){
+			if(this.GetObj("content"+(i + 1)).style.display === 'block'){
+				let index : number = i - this.diagramCount;
+				this.router.navigate(['/addConstraint',index]);	
+			}
+		}
 	}
 
 	initPapers() : void{
@@ -145,6 +158,11 @@ export class DrawingboardComponent implements OnInit {
 					let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
 					that.router.navigate(['/detail',indexAndDomainTextAndColour]);
 				});
+				this.papers[i].on('blank:mousewheel', (event,x ,y ,delta) => {
+					let scale = that.papers[i].scale();
+					console.log(scale);
+					that.papers[i].scale(scale.sx + (delta * 0.01), scale.sy + (delta * 0.01));
+				});
 			}
 		});		
 	}
@@ -155,20 +173,37 @@ export class DrawingboardComponent implements OnInit {
 		});	
 	  }
 
-	getRectList() : void{
+	getRectAndPhenomenonList() : void{
 		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
 				this.service.getRects(i).subscribe(data => {
 					this.rects[i] = data;
 					for(let j = 0;j < this.rects[i].length;j++){
 						if(this.rects[i][j].state === 0){
-							this.rectColourMap.set(this.rects[i][j].text,this.colours[0]);
-							this.colours.shift();
+							if(this.rectColourMap.get(this.rects[i][j].text) === undefined){
+								this.rectColourMap.set(this.rects[i][j].text,this.colours[0]);
+								this.colours.push(this.colours.shift());
+							}	
 						}						
 					}
 				});
 			}
-			
+			for(let i = 0;i < diagramCount;i++){
+				this.service.getPhenomenonList(i).subscribe(data => {
+					this.phenomena[i] = data;
+					for(let j = 0;j < this.phenomena[i].length;j++){
+						let tempPhenomenon : Phenomenon = this.phenomena[i][j];
+						let from : Rect = tempPhenomenon.from;
+						let to : Rect = tempPhenomenon.to;
+						if(from.state === 0){
+							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
+						}
+						else if(to.state === 0){
+							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
+						}
+					}
+				})
+			}
 		});	
 	}
 
@@ -212,6 +247,7 @@ export class DrawingboardComponent implements OnInit {
 		});	
 	}
 
+	/*
 	getPhenomenonList() : void{
 		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
@@ -232,6 +268,7 @@ export class DrawingboardComponent implements OnInit {
 			}
 		});	
 	  }
+	*/
 
 	getDiagramList() : void{
 		this.service.getDiagrams().subscribe(dia=>{
@@ -381,8 +418,7 @@ export class DrawingboardComponent implements OnInit {
 	}
 
 	//index from diagramCount to 2 * diagramCount - 1
-	showTimingDiagrams(index : number) : void{
-		
+	showTimingDiagrams(index : number) : void{		
 		if(this.graphs[index].getCells().length === 0){
 			let tempIndex : number = index - this.diagramCount;
 			let ellipseGraphList = new Array<joint.shapes.basic.Ellipse>();
@@ -444,6 +480,43 @@ export class DrawingboardComponent implements OnInit {
 					this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);		
 				}	
 			}
+			let constraints : string[] = document.cookie.split('/');
+			if(constraints.length !== 0){
+				for(let i = 0;i < constraints.length - 1;i++){
+					let index2 : number = +constraints[i].substring(0, constraints[i].indexOf(':'));
+					if(index2 === tempIndex){
+						let interactionFromIndex = -1;
+						let interactionToIndex = -1;
+						let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+						let cons : string = constraint[1];
+						let fromNum : number = +constraint[0].substring(0,constraint[0].indexOf(','));
+						let toNum : number = +constraint[2].substring(0,constraint[2].indexOf(','));
+						let fromState : number = +constraint[0].substring(1 + constraint[0].indexOf(','));
+						let toState : number = +constraint[2].substring(1 + constraint[2].indexOf(','));
+						for(let j = 0;j < this.interactions[tempIndex].length;j++){
+							let tempInteraction : Interaction = this.interactions[tempIndex][j];
+							if(tempInteraction.number === fromNum && tempInteraction.state === fromState) interactionFromIndex = j;
+							if(tempInteraction.number === toNum && tempInteraction.state === toState) interactionToIndex = j;
+						}
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);
+						link.appendLabel({
+							attrs: {
+								text: {
+									text: cons,
+								},
+								body: {
+									stroke: 'transparent',
+									fill: 'transparent'
+								}
+							}
+						});
+						this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}
+				}
+			}
+			//3:20,0 StrictPre 21,0/4:
 		}
-	}		
+	}
 }

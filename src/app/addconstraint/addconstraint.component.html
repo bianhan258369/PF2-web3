@@ -1,3 +1,16 @@
-<p>
-  addconstraint works!
-</p>
+<div id = "addConstraint">
+  <form>
+    <select name = "from" [(ngModel)]="fromInt">
+      <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
+    </select>
+    <select name = "cons" [(ngModel)]="cons">
+      <option value="StrictPre">StrictPre</option>
+    </select>
+    <select name = "to" [(ngModel)]="toInt">
+      <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
+    </select>
+    <br><br>
+    <input type="submit" value="Submit" (click) = "checkCons()">
+    <input type="submit" value="Cancel" (click) = "goBack()">
+  </form>
+</div>

@@ -1,5 +1,5 @@
 <body>
-	<div>
+	<div id = "topbar">
 		<img src="assets/icons/3.png">
 		<nav>
 		<ul>
@@ -15,11 +15,10 @@
 						<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
 					</span>
 			</li>
-			<li> <a routerLink="/help">Help</a> </li>
 			<!--<li><input type="file" class="fileinput-button" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>-->
-			<!--<li><button (click)="uploadFile()">upload selected files</button></li>-->		
+			<!--<li><button (click)="uploadFile()">upload selected files</button></li>-->	
+			<li><a routerLink="/help">Help</a></li>	
 		</ul>
 		</nav>
-		<div class="tab"></div>
 	</div> 
 </body>

@@ -13,9 +13,12 @@
 		<li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Other Constraints</li>
 		<ng-template #elseOpen1>
 			<li (click)="setOpen1()" class="title">&nbsp;-  Other Constraints</li>
-			<div class="content">
+			<div class="content" id = "OtherConstraint">
 				<!--<table *ngIf="open1" class="content">Information</table>-->
-				<li *ngFor="let constraint of constraints" class="content">{{constraint}}</li>
+				<li *ngFor="let constraint of constraints;let i = index" class="content" id = "consAndBut{{i}}">
+					<span id = "cons{{i}}">{{constraint}}</span>
+					<button (click)=deleteConstraint(i)>delete</button>
+				</li>
 			</div>
 		</ng-template>
 		<li *ngIf="!open2;else elseOpen2" (click)="setOpen2()" class="title">&nbsp;+  Phenomenon</li>
