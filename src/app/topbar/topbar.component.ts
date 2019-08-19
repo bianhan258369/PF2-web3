@@ -19,7 +19,7 @@ export class TopbarComponent implements OnInit {
   }
 
   uploader:FileUploader = new FileUploader({
-    url:"http://localhost:8080/client/upload",
+    url:"http://47.52.116.116:4201/client/upload",
     method:"POST",
     itemAlias:"uploadedFiles"
   });

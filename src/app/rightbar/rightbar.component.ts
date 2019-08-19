@@ -96,5 +96,6 @@ export class RightbarComponent implements OnInit {
 		}
 		console.log(newCookie);
 		document.cookie = newCookie;
+		location.reload(true);
 	}
 }
