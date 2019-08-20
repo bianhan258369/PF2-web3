@@ -10,16 +10,13 @@ import { Phenomenon } from '../entity/Phenomenon';
   styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent implements OnInit {
-  interval;
-  phenomena : Array<Phenomenon>;
-  diagramCount : number;
   constructor(private service:ServiceService) { }
 
   ngOnInit() {
   }
 
   uploader:FileUploader = new FileUploader({
-    url:"http://47.52.116.116:4201/client/upload",
+    url:"http://localhost:8080/client/upload",
     method:"POST",
     itemAlias:"uploadedFiles"
   });

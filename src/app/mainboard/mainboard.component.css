@@ -1,5 +1,5 @@
-div{
-	position: absolute;
+#topbar{
+    position: absolute;
 	float:top;
 	top:0;
 	/* left: 6%; */
@@ -9,9 +9,8 @@ div{
 	text-align:center;
 	/* margin:0 auto; */
 	/* align-items: center; */
-	
 }
-.tab{
+#topbar .tab{
 	position: relative;
 	background: white;
 	top:74.5%;
@@ -19,8 +18,8 @@ div{
 	height:25%;
 	color:black;
 }
-button{
-	margin:3% 0% 3% 0%;/*…œ”“œ¬◊Û*/
+#topbar button{
+	margin:3% 0% 3% 0%;/*‰∏äÂè≥‰∏ãÂ∑¶*/
 	display: block;
     text-align: center;
     text-decoration: none;
@@ -30,7 +29,7 @@ button{
 	background: #1874CD;
 }
 
-.xmlfileinput-button {
+#topbar .xmlfileinput-button {
 
 	padding: 4px 10px;
     height: 20px;
@@ -47,7 +46,7 @@ button{
     *zoom: 1
 }
 
-.xmlfileinput-button input{
+#topbar .xmlfileinput-button input{
 	
 	position: absolute;
     font-size: 100px;
@@ -58,14 +57,14 @@ button{
     cursor: pointer
 }
 
-.xmlfileinput-button:hover{
+#topbar .xmlfileinput-button:hover{
 	color: #444;
     background: #eee;
     border-color: #ccc;
     text-decoration: none
 }
 
-.owlfileinput-button {
+#topbar .owlfileinput-button {
 
 	padding: 4px 10px;
     height: 20px;
@@ -82,7 +81,7 @@ button{
     *zoom: 1
 }
 
-.owlfileinput-button input{
+#topbar .owlfileinput-button input{
 	
 	position: absolute;
     font-size: 100px;
@@ -93,14 +92,14 @@ button{
     cursor: pointer
 }
 
-.owlfileinput-button:hover{
+#topbar .owlfileinput-button:hover{
 	color: #444;
     background: #eee;
     border-color: #ccc;
     text-decoration: none
 }
 
-nav{
+#topbar nav{
 	position: relative;
 	float:left;
 	/* margin-left:50px; */
@@ -110,30 +109,30 @@ nav{
 	top:30%; 
 	left:6%;
 	margin:0 auto;
-	/* margin:0% 10% 0% 10%;…œ”“œ¬◊Û */
+	/* margin:0% 10% 0% 10%;‰∏äÂè≥‰∏ãÂ∑¶ */
 	/* margin-left: auto;
 	margin-right: auto; */
 }
-img{
+#topbar img{
 	position: relative;
 	top:5%;
 	left: 0.2%;
 	float:left;
 	width: 5.5%;
 }
-ul{
+#topbar ul{
     padding: 0;
 	margin: 0;
 	height: 30px;
     list-style-type: none;
 }
-ul li{
+#topbar ul li{
     float: left;
 	position: relative;
 	color: white;
 	width: 150px;
 }
-ul li a,ul li a:visited{
+#topbar ul li a,#topbar ul li a:visited{
     text-align: center;
     text-decoration: none;
 	padding: 4px 10px;
@@ -151,15 +150,73 @@ ul li a,ul li a:visited{
     *zoom: 1	
 }
 
-ul li a:hover{
+#topbar ul li a:hover{
 	color: #444;
     background: #eee;
     border-color: #ccc;
     text-decoration: none
 }
 
-.tablabel{
+#topbar .tablabel{
 	position: relative;
 	left:1%;
 	color: black;
+}
+
+
+
+#drawingboard{
+    background:white;
+	position: absolute;
+	top:9.1%;
+	left:0;
+	width:83%;
+	height:90.9%;
+	float: center;
+}
+#drawingboard ul,li{
+	margin:0px;
+	padding:0px;
+}
+#drawingboard .tab{
+	position: relative;
+	top:0%;
+	left:0;
+	width:100%;
+	height:3.4%;
+	background:white;
+}
+#drawingboard ul li{
+	position: relative;
+	min-width: 3%;
+	height: 28px;
+	text-align:center;
+	list-style-type:none;
+	float:left;
+	display: block;
+	
+	padding: 4px 10px;
+    height: 20px;
+    line-height: 20px;
+    position: relative;
+    cursor: pointer;
+    color: #888;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+#drawingboard ul li:hover{
+	opacity: 0.5;      
+	display: block;
+	cursor: pointer;
+}
+#drawingboard .content{
+	position: relative;
+	top:0;
+	left:0;
+	width:100%;
+	height:96.5%;
+	float:left;
+	display:none;
 }

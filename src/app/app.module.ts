@@ -18,6 +18,7 @@ import { ClockdiagramDetailComponent } from './clockdiagram-detail/clockdiagram-
 import { RouterModule, Routes } from '@angular/router';
 import { HelpComponent } from './help/help.component';
 import { FormsModule } from '@angular/forms';
+import { MainboardComponent } from './mainboard/mainboard.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { FormsModule } from '@angular/forms';
     AddconstraintComponent,
     ClockdiagramDetailComponent,
     HelpComponent,
+    MainboardComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,24 +1,22 @@
-<body>
-	<div id = "topbar">
-		<img src="assets/icons/3.png">
-		<nav>
-		<ul>
-			<li>
-				<span class="btn btn-success xmlfileinput-button">
-					<span>uploadXML</span>
-					<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)" multiple >
+<div id = "topbar">
+	<img src="assets/icons/3.png">
+	<nav>
+	<ul>
+		<li>
+			<span class="xmlfileinput-button">
+				<span>uploadXML</span>
+				<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)" accept="text/xml, application/xml" multiple >
+			</span>
+		</li>	
+		<li>
+				<span class="owlfileinput-button">
+					<span>uploadOWL</span>
+					<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
 				</span>
-			</li>	
-			<li>
-					<span class="btn btn-success owlfileinput-button">
-						<span>uploadOWL</span>
-						<input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
-					</span>
-			</li>
-			<!--<li><input type="file" class="fileinput-button" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>-->
-			<!--<li><button (click)="uploadFile()">upload selected files</button></li>-->	
-			<li><a routerLink="/help">Help</a></li>	
-		</ul>
-		</nav>
-	</div> 
-</body>
+		</li>
+		<!--<li><input type="file" class="fileinput-button" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>-->
+		<!--<li><button (click)="uploadFile()">upload selected files</button></li>-->	
+		<li><a routerLink="/help">Help</a></li>	
+	</ul>
+	</nav>
+</div> 

@@ -12,10 +12,8 @@ import { TopbarComponent } from './topbar/topbar.component';
 const routes: Routes = [
   //{ path: '', component: AppComponent},
   //{ path: '', redirectTo: '/drawingboard', pathMatch: 'full' },
-  { path: 'topbar', component: TopbarComponent},
   { path: 'help', component: HelpComponent},
   { path: 'rightbar', component: RightbarComponent},
-  { path: 'drawingboard', component: DrawingboardComponent },
   { path: 'addConstraint/:index', component: AddconstraintComponent },
   { path: 'detail/:indexAndDomainTextAndColour', component: ClockdiagramDetailComponent },
 ];

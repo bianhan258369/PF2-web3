@@ -18,7 +18,7 @@ const httpOptions = {
 })
 
 export class ServiceService {
-  private serviceUrl = 'http://47.52.116.116:4201/client';
+  private serviceUrl = 'http://localhost:8080/client';
 
   constructor(private httpClient: HttpClient) {
   }
