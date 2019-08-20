@@ -8,12 +8,14 @@ import { HelpComponent } from './help/help.component';
 import { AppComponent } from './app.component';
 import { RightbarComponent } from './rightbar/rightbar.component';
 import { TopbarComponent } from './topbar/topbar.component';
+import { MainboardComponent } from './mainboard/mainboard.component';
 
 const routes: Routes = [
   //{ path: '', component: AppComponent},
   //{ path: '', redirectTo: '/drawingboard', pathMatch: 'full' },
   { path: 'help', component: HelpComponent},
-  { path: 'rightbar', component: RightbarComponent},
+  //{ path: 'rightbar', component: RightbarComponent},
+  {path: 'mainboard', component: MainboardComponent},
   { path: 'addConstraint/:index', component: AddconstraintComponent },
   { path: 'detail/:indexAndDomainTextAndColour', component: ClockdiagramDetailComponent },
 ];

@@ -44,13 +44,12 @@ export class AddconstraintComponent implements OnInit {
         alert("circuit!");
       } 
       else{
-        //3:20,0 StrictPre 21,0/4:
         let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
         document.cookie = document.cookie + index + ':' + constraint + '/';
         console.log(document.cookie);
-        //this.location.back();
-        //this.router.navigate(['/home'], { skipLocationChange: true });
-        this.router.navigate(['rightbar']);
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
       }
     });
   }

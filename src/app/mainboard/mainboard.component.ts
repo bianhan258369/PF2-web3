@@ -7,16 +7,11 @@ import * as joint from 'node_modules/jointjs/dist/joint.js';
 import { Rect } from '../entity/Rect';
 import { Line } from '../entity/Line';
 import { Oval } from '../entity/Oval';
-import { Tab } from '../entity/Tab';
 import { Diagram } from '../entity/Diagram';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Interaction } from '../entity/Interaction';
 import { Scenario } from '../entity/Scenario';
-import { strictEqual } from 'assert';
-import { stringify } from '@angular/core/src/render3/util';
-import { Kobiton } from 'protractor/built/driverProviders';
-import { type } from 'os';
 import { RouterLink, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -25,11 +20,14 @@ import { RouterLink, Router } from '@angular/router';
   styleUrls: ['./mainboard.component.css']
 })
 export class MainboardComponent implements OnInit {
-  interval
+	interval
+	currentDiagram : number;
 	diagramCount : number;
 	scDiagrams : Array<Diagram>;
 	tDiagrams : Array<Diagram>;
 	diagrams : Array<Diagram>;
+	allPhenomena : Array<Phenomenon>;
+	references : Array<Phenomenon>;
 	rects : Array<Array<Rect>>;
 	lines : Array<Array<Line>>;
 	ovals : Array<Array<Oval>>;
@@ -37,12 +35,14 @@ export class MainboardComponent implements OnInit {
 	scenarios : Array<Array<Scenario>>;
 	phenomena : Array<Array<Phenomenon>>;
 	graph : joint.dia.Graph;
-	graphs : Array<joint.dia.Graph>;
+	//graphs : Array<joint.dia.Graph>;
 	paper : joint.dia.Paper;
-	papers : Array<joint.dia.Paper>;
+	//papers : Array<joint.dia.Paper>;
 	colours : Array<string>;
 	rectColourMap : Map<string, string>;//rectName,colour
-  numberColourMap : Map<number, string>;//interactionNumber,colour
+    numberColourMap : Map<number, string>;//interactionNumber,colour
+    constraints : Array<string>;
+
   uploader:FileUploader = new FileUploader({
     url:"http://localhost:8080/client/upload",
     method:"POST",
@@ -50,7 +50,7 @@ export class MainboardComponent implements OnInit {
   });
 
 
-  constructor(private service:ServiceService, private router : Router) { }
+  constructor(private service : ServiceService, private route : ActivatedRoute, private router : Router) { }
 
   ngOnInit() {
     this.colours = new Array<string>();
@@ -61,13 +61,19 @@ export class MainboardComponent implements OnInit {
 		this.ovals = new Array<Array<Oval>>();
 		this.scenarios = new Array<Array<Scenario>>();
 		this.interactions = new Array<Array<Interaction>>();
-		this.graphs = new Array<joint.dia.Graph>();
+		//this.graphs = new Array<joint.dia.Graph>();
 		this.graph = new joint.dia.Graph();
-		this.papers = new Array<joint.dia.Paper>();
+		//this.papers = new Array<joint.dia.Paper>();
 		this.scDiagrams = new Array<Diagram>();
 		this.tDiagrams = new Array<Diagram>();
 		this.diagrams = new Array<Diagram>();
 		this.phenomena = new Array<Array<Phenomenon>>();
+		this.constraints = new Array<string>();  
+		this.allPhenomena = new Array<Phenomenon>();
+		this.references = new Array<Phenomenon>();
+		this.getConstraints();
+		this.getAllPhenomena();
+		this.getAllReferences();
 		this.initColours();
 		this.getDiagramCount();
 		this.getOvalList();
@@ -79,7 +85,7 @@ export class MainboardComponent implements OnInit {
 		var that = this;
 		that.interval = setInterval(function(){
 			clearInterval(that.interval);
-			that.initPapers();
+			that.initPaper();
 		},1500);
   }
 
@@ -147,12 +153,34 @@ export class MainboardComponent implements OnInit {
 
 	
 	change_Menu(index){//index from 1 to diagramCount * 2
-		if(index <= this.diagramCount)this.showClockDiagrams(index - 1);
+		if(index <= this.diagramCount)this.showClockDiagram(index - 1);
 		else{
 			this.showTimingDiagram(index - 1);
 		} 
+		this.currentDiagram = index - 1;
 	}
 	
+	open1 = false;
+	setOpen1():void{
+		this.open1 = !this.open1;
+	}
+	open2 = false;
+	setOpen2():void{
+		this.open2 = !this.open2;
+	}
+	open3 = false;
+	setOpen3():void{
+		this.open3 = !this.open3;
+	}
+	open4 = false;
+	setOpen4():void{
+		this.open4 = !this.open4;
+	}
+	open5 = false;
+	setOpen5():void{
+		this.open5 = !this.open5;
+	}
+
 
 	initColours() : void{
 		this.colours = new Array<string>();
@@ -174,12 +202,16 @@ export class MainboardComponent implements OnInit {
 	}
 
 	showConstraintDialog() : void{
+		/*
 		for(let i = 0;i < this.graphs.length;i++){
 			if(this.GetObj("content"+(i + 1)).style.display === 'block'){
 				let index : number = i - this.diagramCount;
 				this.router.navigate(['/addConstraint',index]);	
 			}
 		}
+		*/
+		let index : number = this.currentDiagram - this.diagramCount;
+		this.router.navigate(['/addConstraint',index]);	
 	}
 
 	initPaper() : void{
@@ -198,8 +230,22 @@ export class MainboardComponent implements OnInit {
 					color: 'rgb(240,255,255)'
 				}
 		});
+		var that = this;
+		this.paper.on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
+			var currentElement = elementView.model;//currentElement:the element which you double click on
+			let index : number = that.currentDiagram;
+			let domainText : string = currentElement.attr().label.text;
+			let colour : string = that.rectColourMap.get(domainText);
+			let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
+			that.router.navigate(['/detail',indexAndDomainTextAndColour]);
+		});
+		this.paper.on('blank:mousewheel', (event,x ,y ,delta) => {
+			let scale = that.paper.scale();
+			that.paper.scale(scale.sx + (delta * 0.01), scale.sy + (delta * 0.01));
+		});
 	}
 
+	/*
 	initPapers() : void{
 		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount * 2;i++){
@@ -235,6 +281,7 @@ export class MainboardComponent implements OnInit {
 			}
 		});		
 	}
+	*/
 	
 	getDiagramCount() : void{
 		this.service.getDiagramCount().subscribe(data=>{
@@ -360,6 +407,19 @@ export class MainboardComponent implements OnInit {
 		});	
 	}
 
+	getAllPhenomena() : void{
+		this.service.getAllPhenomenonList().subscribe(data => {
+			this.allPhenomena = data;
+		})
+	}
+
+	getAllReferences() : void{
+		this.service.getAllReferenceList().subscribe(data => {
+			this.references = data;
+		})
+	}
+
+	/*
 	//index from 0 to diagramCount - 1
 	showClockDiagrams(index : number) : void{
 		if(this.graphs[index].getCells().length === 0){
@@ -617,6 +677,7 @@ export class MainboardComponent implements OnInit {
 			//3:20,0 StrictPre 21,0/4:
 		}
 	}
+	*/
 
 	showClockDiagram(index : number) : void{
 		this.graph.clear();
@@ -872,6 +933,48 @@ export class MainboardComponent implements OnInit {
 			}
 		}
 		//3:20,0 StrictPre 21,0/4:
+	}
+
+	getConstraints() : void{
+		this.service.getOWLConstrainList().subscribe(data=>{
+			this.constraints = data;
+			if(document.cookie.length !== 0){
+				//3:20,0 StrictPre 21,0/4:
+				let constraints : string[] = document.cookie.split('/');
+				for(let i = 0;i < constraints.length - 1;i++){
+					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+					let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
+					let cons : string = constraint[1];
+					let to : string = 'int' + constraint[2].substring(0,constraint[2].indexOf(','));
+					this.constraints.push(from + ' ' + cons + ' ' + to);
+				}
+			}	
+			//this.router.navigate(['']);
+		});	
+	  }
+
+	  deleteConstraint(index : number) : void{
+		let newCookie : string = "";
+		let parent = document.getElementById('OtherConstraint');
+		let child = document.getElementById('consAndBut' + index);
+		let selectedCons = document.getElementById('cons' + index).innerText;
+		let constraints : string[] = document.cookie.split('/');
+		for(let i = 0;i < constraints.length - 1;i++){
+			let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+			let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
+			let cons : string = constraint[1];
+			let to : string = 'int' + constraint[2].substring(0,constraint[2].indexOf(','));
+			console.log(from + ' ' + cons + ' ' + to);
+			if((from + ' ' + cons + ' ' + to) === selectedCons){
+				parent.removeChild(child);
+			}
+			else{
+				newCookie = newCookie + constraints[i] + '/';
+			}
+		}
+		console.log(newCookie);
+		document.cookie = newCookie;
+		location.reload(true);
 	}
 
 }

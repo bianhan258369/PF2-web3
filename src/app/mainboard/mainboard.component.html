@@ -16,7 +16,10 @@
     </li>
     <!--<li><input type="file" class="fileinput-button" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>-->
     <!--<li><button (click)="uploadFile()">upload selected files</button></li>-->	
-    <li><a routerLink="/help">Help</a></li>	
+    <li><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>	
+    <li><button class="button" id="ExportCpnstraint">Export Constraints</button></li>
+    <li><button class="button" id="SemanticCheck">Semantic Check</button></li>
+    <li id="help"><a routerLink="/help">Help</a></li>	
   </ul>
   </nav>
 </div> 
@@ -25,8 +28,106 @@
 	<div class="tab">
 		<ul>
 			<li *ngFor="let diagram of diagrams;let i = index" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</li>
-			<li id = "AddConstraint" (click) = "showConstraintDialog()">Add Constraint</li>
+			<!--<li id = "AddConstraint" (click) = "showConstraintDialog()">Add Constraint</li>-->
 		</ul>
 	</div>
-	<div *ngFor="let diagram of diagrams;let i = index" class="content" id="content{{i + 1}}"></div>
+	<div class="content" id="content1"></div>
 </div>
+
+<div id="rightbar">
+    <ul>
+      <li class="title">&nbsp;Process of Getting Time Sequences
+        <div class="content">
+          <ul class="content">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:Read the Ontology File</li>	
+            <li>&nbsp;Step 3:Manually Add Constraints</li>
+          </ul>
+        </div>
+      </li><br>
+      <button>NEXT</button>
+      <li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Other Constraints</li>
+      <ng-template #elseOpen1>
+        <li (click)="setOpen1()" class="title">&nbsp;-  Other Constraints</li>
+        <div class="content" id = "OtherConstraint">
+          <!--<table *ngIf="open1" class="content">Information</table>-->
+          <table *ngFor="let constraint of constraints;let i = index" class="content" id = "consAndBut{{i}}">
+            <span id = "cons{{i}}">{{constraint}}</span>
+            <button class="DeleteButton" (click)=deleteConstraint(i)>delete</button>
+          </table>
+        </div>
+      </ng-template>
+      <li *ngIf="!open2;else elseOpen2" (click)="setOpen2()" class="title">&nbsp;+  Phenomenon</li>
+      <ng-template #elseOpen2>
+        <li (click)="setOpen2()" class="title">&nbsp;-  Phenomenon</li>
+        <div class="content">
+          <table *ngIf="open2" class="content">
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>PheType</th>
+            </tr>
+            <tr *ngFor="let phenomonon of allPhenomena">
+              <th>phe {{phenomonon.biaohao}}</th>
+              <th>{{phenomonon.name}}</th>
+              <th>{{phenomonon.state}}</th>
+            </tr>
+          </table>	
+        </div>
+      </ng-template>
+      <li *ngIf="!open3;else elseOpen3" (click)="setOpen3()" class="title">&nbsp;+  Interaction</li>
+      <ng-template #elseOpen3>
+        <li (click)="setOpen3()" class="title">&nbsp;-  Interaction</li>
+        <div class="content">
+          <table *ngIf="open3" class="content">
+            <tr>
+              <th>Name</th>
+              <th>Initiator</th>
+              <th>Receiver</th>
+              <th>Content</th>
+            </tr>
+            <tr *ngFor="let phenomonon of allPhenomena">
+              <th>int {{phenomonon.biaohao}}</th>
+              <th>{{phenomonon.from.shortName}}</th>
+              <th>{{phenomonon.to.shortName}}</th>
+              <th>{{phenomonon.name}}</th>
+            </tr>
+          </table>
+        </div>
+      </ng-template>
+      <li *ngIf="!open4;else elseOpen4" (click)="setOpen4()" class="title">&nbsp;+  Reference</li>
+      <ng-template #elseOpen4>
+        <li (click)="setOpen4()" class="title">&nbsp;-  Reference</li>
+        <div class="content">
+          <table *ngIf="open4" class="content">
+            <tr>
+              <th>Name</th>
+              <th>Initiator</th>
+              <th>Receiver</th>
+              <th>Content</th>
+              <th>RefType</th>
+            </tr>
+            <tr *ngFor="let reference of references">
+              <th>req {{reference.requirement.biaohao}}</th>
+              <th>{{reference.from.shortName}}</th>
+              <th>{{reference.to.shortName}}</th>
+              <th>{{reference.name}}</th>
+              <th *ngIf="reference.constraining === true">constraining</th>
+              <th *ngIf="reference.constraining === false">normal</th>
+            </tr>						
+          </table>
+        </div>
+      </ng-template>
+      <li *ngIf="!open5;else elseOpen5" (click)="setOpen5()" class="title">&nbsp;+  PD Information</li>
+      <ng-template #elseOpen5>
+        <li (click)="setOpen5()" class="title">&nbsp;-  PD Information</li>
+        <div class="content">
+          <table *ngIf="open5" class="content">Information</table>
+        </div>
+      </ng-template>		
+    </ul>
+  </div>
+
+  
+  
+  
