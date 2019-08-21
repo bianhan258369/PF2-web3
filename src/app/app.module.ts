@@ -11,6 +11,7 @@ import { FileUploadModule } from 'ng2-file-upload'
 import {CommonModule} from '@angular/common'
 import { HttpClientModule }    from '@angular/common/http';
 import { ServiceService } from './service/service.service';
+import { CookieService } from "ngx-cookie-service";
 import { AppRoutingModule } from './app-routing.module'
 import { Router } from 'backbone';
 import { AddconstraintComponent } from './addconstraint/addconstraint.component';
@@ -19,7 +20,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HelpComponent } from './help/help.component';
 import { FormsModule } from '@angular/forms';
 import { MainboardComponent } from './mainboard/mainboard.component';
-
+import { WorkflowComponent } from './workflow/workflow.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { MainboardComponent } from './mainboard/mainboard.component';
     ClockdiagramDetailComponent,
     HelpComponent,
     MainboardComponent,
+    WorkflowComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +45,7 @@ import { MainboardComponent } from './mainboard/mainboard.component';
     RouterModule,
     FormsModule,
   ],
-  providers: [ServiceService],
+  providers: [ServiceService,CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

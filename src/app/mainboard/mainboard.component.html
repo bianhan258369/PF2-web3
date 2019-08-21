@@ -2,22 +2,31 @@
   <img src="assets/icons/3.png">
   <nav>
   <ul>
-    <li>
+    <li *ngIf="step===1" >
       <span class="btn btn-success xmlfileinput-button">
         <span>uploadXML</span>
         <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)" accept="text/xml, application/xml" multiple >
       </span>
     </li>	
-    <li>
+    <li *ngIf="step!==1" >
+      <span class="btn btn-success xmlfileinput-button" id="CannotXML">
+        <span>uploadXML</span>
+      </span>
+    </li>	
+    <li *ngIf="step===2" >
         <span class="btn btn-success owlfileinput-button">
           <span>uploadOWL</span>
           <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
         </span>
     </li>
-    <!--<li><input type="file" class="fileinput-button" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" multiple/></li>-->
-    <!--<li><button (click)="uploadFile()">upload selected files</button></li>-->	
-    <li><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>	
-    <li><button class="button" id="ExportCpnstraint">Export Constraints</button></li>
+    <li *ngIf="step!==2" >
+        <span class="btn btn-success owlfileinput-button" id="CannotOWL">
+          <span>uploadOWL</span>
+        </span>
+    </li>
+    <li *ngIf="step === 3"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
+    <li *ngIf="step !== 3"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>	
+    <li><button class="button" id="Sace">Save</button></li>
     <li><button class="button" id="SemanticCheck">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	
   </ul>
@@ -38,17 +47,33 @@
     <ul>
       <li class="title">&nbsp;Process of Getting Time Sequences
         <div class="content">
-          <ul class="content">
-            <li>&nbsp;Step 1:Read the Project File</li>
+          <ul class="content" *ngIf="step === 1">
+            <li style="background:#CFD8DC">&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:Read the Ontology File</li>	
+            <li>&nbsp;Step 3:Manually Add Constraints</li>
+          </ul>
+          <ul class="content" *ngIf="step === 2">
+            <li >&nbsp;Step 1:Read the Project File</li>
+            <li style="background:#CFD8DC">&nbsp;Step 2:Read the Ontology File</li>	
+            <li>&nbsp;Step 3:Manually Add Constraints</li>
+          </ul>
+          <ul class="content" *ngIf="step === 3">
+            <li >&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:Read the Ontology File</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 3:Manually Add Constraints</li>
+          </ul>
+          <ul class="content" *ngIf="step > 3">
+            <li >&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:Read the Ontology File</li>	
             <li>&nbsp;Step 3:Manually Add Constraints</li>
           </ul>
         </div>
       </li><br>
-      <button>NEXT</button>
-      <li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Other Constraints</li>
+      <button (click) = "previous()">PREVIOUS</button>
+      <button (click) = "next()">NEXT</button>
+      <li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Added Constraints</li>
       <ng-template #elseOpen1>
-        <li (click)="setOpen1()" class="title">&nbsp;-  Other Constraints</li>
+        <li (click)="setOpen1()" class="title">&nbsp;-  Added Constraints</li>
         <div class="content" id = "OtherConstraint">
           <!--<table *ngIf="open1" class="content">Information</table>-->
           <table *ngFor="let constraint of constraints;let i = index" class="content" id = "consAndBut{{i}}">

@@ -12,6 +12,7 @@ import { Interaction } from '../entity/Interaction';
 import { Scenario } from '../entity/Scenario';
 import { RouterLink, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -21,6 +22,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class MainboardComponent implements OnInit {
 	interval
+	step : number;
 	currentDiagram : number;
 	diagramCount : number;
 	scDiagrams : Array<Diagram>;
@@ -46,47 +48,48 @@ export class MainboardComponent implements OnInit {
   uploader:FileUploader = new FileUploader({
     url:"http://localhost:8080/client/upload",
     method:"POST",
-    itemAlias:"uploadedFiles"
+	itemAlias:"uploadedFiles"
   });
 
 
-  constructor(private service : ServiceService, private route : ActivatedRoute, private router : Router) { }
+  constructor(private service : ServiceService,private cookieService:CookieService, private route : ActivatedRoute, private router : Router) {
+	  
+   }
 
   ngOnInit() {
-    this.colours = new Array<string>();
-		this.rectColourMap = new Map<string, string>();
-		this.numberColourMap = new Map<number, string>();
-		this.rects = new Array<Array<Rect>>();
-		this.lines = new Array<Array<Line>>();
-		this.ovals = new Array<Array<Oval>>();
-		this.scenarios = new Array<Array<Scenario>>();
-		this.interactions = new Array<Array<Interaction>>();
-		//this.graphs = new Array<joint.dia.Graph>();
-		this.graph = new joint.dia.Graph();
-		//this.papers = new Array<joint.dia.Paper>();
-		this.scDiagrams = new Array<Diagram>();
-		this.tDiagrams = new Array<Diagram>();
-		this.diagrams = new Array<Diagram>();
-		this.phenomena = new Array<Array<Phenomenon>>();
-		this.constraints = new Array<string>();  
-		this.allPhenomena = new Array<Phenomenon>();
-		this.references = new Array<Phenomenon>();
-		this.getConstraints();
-		this.getAllPhenomena();
-		this.getAllReferences();
-		this.initColours();
-		this.getDiagramCount();
-		this.getOvalList();
-		this.getLineList();
-		this.getScenarioList();
-		this.getInteractionList();
-		this.getRectAndPhenomenonList();
-		this.getDiagramList();
-		var that = this;
-		that.interval = setInterval(function(){
-			clearInterval(that.interval);
-			that.initPaper();
-		},1500);
+	this.colours = new Array<string>();
+	this.rectColourMap = new Map<string, string>();
+	this.numberColourMap = new Map<number, string>();
+	this.rects = new Array<Array<Rect>>();
+	this.lines = new Array<Array<Line>>();
+	this.ovals = new Array<Array<Oval>>();
+	this.scenarios = new Array<Array<Scenario>>();
+	this.interactions = new Array<Array<Interaction>>();
+	this.graph = new joint.dia.Graph();
+	this.scDiagrams = new Array<Diagram>();
+	this.tDiagrams = new Array<Diagram>();
+	this.diagrams = new Array<Diagram>();
+	this.phenomena = new Array<Array<Phenomenon>>();
+	this.constraints = new Array<string>();  
+	this.allPhenomena = new Array<Phenomenon>();
+	this.references = new Array<Phenomenon>();
+	this.getConstraints();
+	this.getAllPhenomena();
+	this.getAllReferences();
+	this.initColours();
+	this.getDiagramCount();
+	this.getOvalList();
+	this.getLineList();
+	this.getScenarioList();
+	this.getInteractionList();
+	this.getRectAndPhenomenonList();
+	this.getDiagramList();
+	var that = this;
+	this.step = +this.cookieService.get('step');
+	that.interval = setInterval(function(){
+		clearInterval(that.interval);
+		that.initPaper();
+	},1500);
   }
 
   selectedXMLFileOnChanged(event:any) {
@@ -105,7 +108,7 @@ export class MainboardComponent implements OnInit {
     var that = this;
     setTimeout(function(){
       location.reload(true);
-    },1000);
+	},1000);
   }
 
   selectedOWLFileOnChanged(event:any) {
@@ -124,34 +127,9 @@ export class MainboardComponent implements OnInit {
     var that = this;
     setTimeout(function(){
       location.reload(true);
-    },1000);
+	},1000);
   }
 
-  GetObj(objName){
-		if(document.getElementById){
-		return eval('document.getElementById("' + objName + '")');
-		}
-	}
-
-	/*
-	change_Menu(index){//index from 1 to diagramCount * 2
-		for(var i=1;i<=this.diagramCount * 2;i++){
-		if(this.GetObj("content"+i)&&this.GetObj("lm"+i)){
-			this.GetObj("content"+i).style.display = 'none';
-		}
-	}
-		if(this.GetObj("content"+index)&&this.GetObj("lm"+index)){
-			this.GetObj("content"+index).style.display = 'block';
-			if(index <= this.diagramCount)this.showClockDiagrams(index - 1);
-			else{
-				this.showTimingDiagrams(index - 1);
-			} 
-		}
-	}
-	*/
-	
-
-	
 	change_Menu(index){//index from 1 to diagramCount * 2
 		if(index <= this.diagramCount)this.showClockDiagram(index - 1);
 		else{
@@ -202,16 +180,10 @@ export class MainboardComponent implements OnInit {
 	}
 
 	showConstraintDialog() : void{
-		/*
-		for(let i = 0;i < this.graphs.length;i++){
-			if(this.GetObj("content"+(i + 1)).style.display === 'block'){
-				let index : number = i - this.diagramCount;
-				this.router.navigate(['/addConstraint',index]);	
-			}
-		}
-		*/
 		let index : number = this.currentDiagram - this.diagramCount;
-		this.router.navigate(['/addConstraint',index]);	
+		if(index >= 0 && index < this.diagramCount){
+			this.router.navigate(['/addConstraint',index]);	
+		}	
 	}
 
 	initPaper() : void{
@@ -245,44 +217,6 @@ export class MainboardComponent implements OnInit {
 		});
 	}
 
-	/*
-	initPapers() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
-			for(let i = 0;i < diagramCount * 2;i++){
-				this.graphs[i] = new joint.dia.Graph();
-				let d = $("#content" + (i + 1));
-				let wid = d.width();
-				let hei =d.height();
-				this.papers[i] = new joint.dia.Paper({
-					el: $("#content" +  (i + 1)),
-					width:wid,
-					height:hei,
-					model: this.graphs[i],
-					gridSize: 10,
-					drawGrid: true,
-					background: {
-							color: 'rgb(240,255,255)'
-						}
-				});
-				var that = this;
-				this.papers[i].on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
-					var currentElement = elementView.model;//currentElement:the element which you double click on
-					let index : number = i;
-					let domainText : string = currentElement.attr().label.text;
-					let colour : string = that.rectColourMap.get(domainText);
-					let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
-					that.router.navigate(['/detail',indexAndDomainTextAndColour]);
-				});
-				this.papers[i].on('blank:mousewheel', (event,x ,y ,delta) => {
-					let scale = that.papers[i].scale();
-					console.log(scale);
-					that.papers[i].scale(scale.sx + (delta * 0.01), scale.sy + (delta * 0.01));
-				});
-			}
-		});		
-	}
-	*/
-	
 	getDiagramCount() : void{
 		this.service.getDiagramCount().subscribe(data=>{
 			this.diagramCount = data;
@@ -297,8 +231,10 @@ export class MainboardComponent implements OnInit {
 					for(let j = 0;j < this.rects[i].length;j++){
 						if(this.rects[i][j].state === 0){
 							if(this.rectColourMap.get(this.rects[i][j].text) === undefined){
-								this.rectColourMap.set(this.rects[i][j].text,this.colours[0]);
-								this.colours.push(this.colours.shift());
+								let colour : string = this.colours.shift();
+								//console.log(colour);
+								this.rectColourMap.set(this.rects[i][j].text,colour);
+								this.colours.push(colour);
 							}	
 						}						
 					}
@@ -363,29 +299,6 @@ export class MainboardComponent implements OnInit {
 		});	
 	}
 
-	/*
-	getPhenomenonList() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
-			for(let i = 0;i < diagramCount;i++){
-				this.service.getPhenomenonList(i).subscribe(data => {
-					this.phenomena[i] = data;
-					for(let j = 0;j < this.phenomena[i].length;j++){
-						let tempPhenomenon : Phenomenon = this.phenomena[i][j];
-						let from : Rect = tempPhenomenon.from;
-						let to : Rect = tempPhenomenon.to;
-						if(from.state === 0){
-							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
-						}
-						else if(to.state === 0){
-							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
-						}
-					}
-				})
-			}
-		});	
-	  }
-	*/
-
 	getDiagramList() : void{
 		this.service.getDiagrams().subscribe(dia=>{
 			this.diagrams = dia;
@@ -419,300 +332,119 @@ export class MainboardComponent implements OnInit {
 		})
 	}
 
-	/*
-	//index from 0 to diagramCount - 1
-	showClockDiagrams(index : number) : void{
-		if(this.graphs[index].getCells().length === 0){
-			let rectGraphList = new Array<joint.shapes.basic.Rect>();
-			let ovalGraphList = new Array<joint.shapes.basic.Ellipse>();
-			for(let i = 0;i < this.rects[index].length;i++){
-				let rect = new joint.shapes.standard.Rectangle({
-					position: {x: this.rects[index][i].x1,y : this.rects[index][i].y1},
-					size: {width: this.rects[index][i].x2+150,height: this.rects[index][i].y2},
-					attrs: { body: { fill: 'blue' }, label: { text: this.rects[index][i].text, fill: 'white' }}
-				});
-				rectGraphList[i] = rect;
-			}
-			for(let i = 0;i < this.ovals[index].length;i++){
-				let oval = new joint.shapes.standard.Ellipse({
-					position: {x: this.ovals[index][i].x1,y : this.ovals[index][i].y1},
-					size: {width: this.ovals[index][i].x2+150,height: this.ovals[index][i].y2},
-					attrs: { body: { fill: 'blue' }, label: { text: this.ovals[index][i].text, fill: 'white' }}
-				});
-				ovalGraphList[i] = oval;
-			}
-			for(let i = 0;i < this.lines[index].length;i++){
-				let line = this.lines[index][i];
-				if(line.state === 0){
-					let rectFrom : Rect = line.from as Rect;
-					let rectTo : Rect = line.to as Rect;
-					let rectFromIndex = -1;
-					let rectToIndex = -1;
-					for(let j = 0;j < this.rects[index].length;j++){
-						let tempRect : Rect = this.rects[index][j];
-						if(tempRect.text === rectFrom.text) rectFromIndex = j;
-						if(tempRect.text === rectTo.text) rectToIndex = j;
-					}
-					let link = new joint.shapes.standard.Link({
-						source: { id: rectGraphList[rectFromIndex].id },
-						target: { id: rectGraphList[rectToIndex].id },
-						});
-						link.appendLabel({
-							attrs: {
-								text: {
-									text: line.name,
-								},
-								body: {
-									stroke: 'transparent',
-									fill: 'transparent'
-								}
-							}
-						});
-					this.graphs[index].addCells([rectGraphList[rectFromIndex], rectGraphList[rectToIndex],link]);
-				}
-				else if(line.state === 1){
-					let oval : Oval = line.from as Oval;
-					let rect : Rect = line.to as Rect;
-					let rectIndex = -1;
-					let ovalIndex = -1;
-					for(let j = 0;j < this.rects[index].length;j++){
-						let tempRect : Rect = this.rects[index][j];
-						if(tempRect.text === rect.text) rectIndex = j;
-					}
-					for(let j = 0;j < this.ovals[index].length;j++){
-						let tempOval : Oval = this.ovals[index][j];
-						if(tempOval.text === oval.text) ovalIndex = j;
-					}
-					let link = new joint.dia.Link({
-						source: { id: rectGraphList[rectIndex].id },
-						target: { id: ovalGraphList[ovalIndex].id },
-						attrs:{
-							".connection":{
-								'stroke-width': '2',
-								'stroke-dasharray':'5 5'
-							}
-						}
-						});
-						link.appendLabel({
-							attrs: {
-								text: {
-									text: line.name,
-								},
-								body: {
-									stroke: 'transparent',
-									fill: 'transparent'
-								}
-							}
-						});
-					this.graphs[index].addCells([rectGraphList[rectIndex],ovalGraphList[ovalIndex],link]);
-				}
-				else{
-					let oval : Oval = line.from as Oval;
-					let rect : Rect = line.to as Rect;
-					let rectIndex = -1;
-					let ovalIndex = -1;
-					for(let j = 0;j < this.rects[index].length;j++){
-						let tempRect : Rect = this.rects[index][j];
-						if(tempRect.text === rect.text) rectIndex = j;
-					}
-					for(let j = 0;j < this.ovals[index].length;j++){
-						let tempOval : Oval = this.ovals[index][j];
-						if(tempOval.text === oval.text) ovalIndex = j;
-					}
-					let link = new joint.shapes.standard.Link({
-						source: { id: ovalGraphList[ovalIndex].id },
-						target: { id: rectGraphList[rectIndex].id },
-						attrs:{
-							line:{
-								strokeDasharray: '5 5'
-							}
-						}
-						});
-						link.appendLabel({
-							attrs: {
-								text: {
-									text: line.name,
-								},
-								body: {
-									stroke: 'transparent',
-									fill: 'transparent'
-								}
-							}
-						});
-					this.graphs[index].addCells([rectGraphList[rectIndex],ovalGraphList[ovalIndex],link]);
-				}
-			}
-		}
-		
-	}
-
-	//index from diagramCount to 2 * diagramCount - 1
-	showTimingDiagrams(index : number) : void{		
-		if(this.graphs[index].getCells().length === 0){
-			let tempIndex : number = index - this.diagramCount;
-			let ellipseGraphList = new Array<joint.shapes.basic.Ellipse>();
-			for(let i = 0;i < this.rects[tempIndex].length;i++){
-				let tempRect : Rect = this.rects[tempIndex][i];
-				if(tempRect.state === 0){
-					let text = new joint.shapes.standard.TextBlock({
-						position:{x:0,y:i * 25 - 25},
-						size:{width:40, height:20},
-						attrs:{body:{stroke : 'transparent', fill : 'transparent'}, label:{text: tempRect.shortName + ":"}}
-					})
-					//text.attr('label/text', tempRect.shortName);
-					let tag = new joint.shapes.basic.Rect({
-						position:{x:40,y:i * 25 - 25},
-						size:{width:40, height:20},
-						attrs:{rect : {fill: this.rectColourMap.get(tempRect.text)}}
-					});
-					this.graphs[index].addCell(text);
-					this.graphs[index].addCell(tag);
-				}
-			}
-			for(let i = 0;i < this.interactions[tempIndex].length;i++){
-				let ellipse = new joint.shapes.basic.Ellipse({
-					position: {x: this.interactions[tempIndex][i].x1,y : this.interactions[tempIndex][i].y1},
-					size: {width: this.interactions[tempIndex][i].x2,height: this.interactions[tempIndex][i].y2},
-					attrs: { ellipse: { fill: this.numberColourMap.get(this.interactions[tempIndex][i].number) }, text: { text: 'int' + this.interactions[tempIndex][i].number, fill: 'white' }},
-				})
-				ellipseGraphList[i] = ellipse;
-			}
-			for(let i = 0;i < this.scenarios[tempIndex].length;i++){
-				let scenario : Scenario = this.scenarios[tempIndex][i];
-				let interactionFrom : Interaction = scenario.from;
-				let interactionTo : Interaction = scenario.to;
-				let interactionFromIndex = -1;
-				let interactionToIndex = -1;
-				for(let j = 0;j < this.interactions[tempIndex].length;j++){
-					let tempInteraction : Interaction = this.interactions[tempIndex][j];
-					if(tempInteraction.number === interactionFrom.number && tempInteraction.state === interactionFrom.state) interactionFromIndex = j;
-					if(tempInteraction.number === interactionTo.number && tempInteraction.state === interactionTo.state) interactionToIndex = j;
-				}
-
-				if(scenario.state === 4){
-					let link = new joint.shapes.standard.Link();
-					link.source(ellipseGraphList[interactionToIndex]);
-					link.target(ellipseGraphList[interactionFromIndex]);
-					link.attr({
-						line: {
-							strokeWidth: 1,
-							targetMarker:{
-								'fill': 'black',
-								'stroke': 'black',
-							}
-						},
-						
-					});
-					this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
-				}
-				else if(scenario.state ===2){
-					let link = new joint.shapes.standard.Link();
-					link.source(ellipseGraphList[interactionFromIndex]);
-					link.target(ellipseGraphList[interactionToIndex]);	
-					link.attr({
-						line: {
-							strokeWidth: 1,
-							targetMarker:{
-								'fill': 'none',
-								'stroke': 'none',
-							}
-						},
-						
-					});
-					this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
-				}
-				else{
-					let link = new joint.shapes.standard.Link();
-					link.source(ellipseGraphList[interactionFromIndex]);
-					link.target(ellipseGraphList[interactionToIndex]);	
-					link.attr({
-						line: {
-							strokeWidth: 1,
-							targetMarker:{
-								'fill': 'black',
-								'stroke': 'black',
-							}
-						},
-						
-					});
-					this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);		
-				}	
-			}
-			let constraints : string[] = document.cookie.split('/');
-			if(constraints.length !== 0){
-				for(let i = 0;i < constraints.length - 1;i++){
-					let index2 : number = +constraints[i].substring(0, constraints[i].indexOf(':'));
-					if(index2 === tempIndex){
-						let interactionFromIndex = -1;
-						let interactionToIndex = -1;
-						let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-						let cons : string = constraint[1];
-						let fromNum : number = +constraint[0].substring(0,constraint[0].indexOf(','));
-						let toNum : number = +constraint[2].substring(0,constraint[2].indexOf(','));
-						let fromState : number = +constraint[0].substring(1 + constraint[0].indexOf(','));
-						let toState : number = +constraint[2].substring(1 + constraint[2].indexOf(','));
-						for(let j = 0;j < this.interactions[tempIndex].length;j++){
-							let tempInteraction : Interaction = this.interactions[tempIndex][j];
-							if(tempInteraction.number === fromNum && tempInteraction.state === fromState) interactionFromIndex = j;
-							if(tempInteraction.number === toNum && tempInteraction.state === toState) interactionToIndex = j;
-						}
-						let link = new joint.shapes.standard.Link();
-						link.source(ellipseGraphList[interactionFromIndex]);
-						link.target(ellipseGraphList[interactionToIndex]);
-						link.appendLabel({
-							attrs: {
-								text: {
-									text: cons,
-								},
-								body: {
-									stroke: 'transparent',
-									fill: 'transparent'
-								}
-							}
-						});
-						this.graphs[index].addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
-					}
-				}
-			}
-			//3:20,0 StrictPre 21,0/4:
-		}
-	}
-	*/
-
 	showClockDiagram(index : number) : void{
 		this.graph.clear();
+		var MachineElement = joint.dia.Element.define('examples.CustomTextElement', {
+			attrs: {
+				label: {
+					textAnchor: 'middle', //文本居中
+					textVerticalAnchor: 'middle',
+				},
+				r: {
+					strokeWidth: 1, //宽度
+					stroke: '#000000', //颜色
+					fill: 'none' //填充色
+				},
+				r1: {
+					strokeWidth: 1,
+					stroke: '#000000',
+					fill: 'none',
+				},
+				r2: {
+					strokeWidth: 1,
+					stroke: '#000000',
+					fill: 'none',
+				},
+			}
+		}, {
+				markup: [{
+					tagName: 'text',
+					selector: 'label'
+				}, {
+					tagName: 'rect',
+					selector: 'r'
+				}, {
+					tagName: 'rect',
+					selector: 'r1'
+				}, {
+					tagName: 'rect',
+					selector: 'r2'
+				}]
+			});
+
+		var machineElement = new MachineElement();
 		let rectGraphList = new Array<joint.shapes.basic.Rect>();
 		let ovalGraphList = new Array<joint.shapes.basic.Ellipse>();
 		for(let i = 0;i < this.rects[index].length;i++){
 			let rect = new joint.shapes.standard.Rectangle({
 				position: {x: this.rects[index][i].x1,y : this.rects[index][i].y1},
 				size: {width: this.rects[index][i].x2+150,height: this.rects[index][i].y2},
-				attrs: { body: { fill: 'blue' }, label: { text: this.rects[index][i].text, fill: 'white' }}
+				attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: this.rects[index][i].text, fill: '#000000' }}
 			});
 			rectGraphList[i] = rect;
+			if(this.rects[index][i].state === 2){
+				machineElement.attr(
+					{
+					label: {
+						text: this.rects[index][i].text + '(' + this.rects[index][i].shortName + ')',
+						x: this.rects[index][i].x1,
+						y: this.rects[index][i].y1,
+					},
+					r: {
+						ref: 'label',
+						refX: -45, //坐标原点
+						refY: 0,
+						x: 0, //图形位置
+						y: 0,
+						refWidth: 40, //图形大小
+						refHeight: '120%',
+					},
+					r1: {
+						ref: 'r',
+						refX: 20,
+						refY: 0,
+						x: 0,
+						y: 0,
+						refWidth:-20,
+						refHeight:'100%'
+					},
+					r2: {
+						ref: 'r',
+						refX: 40,
+						refY: 0,
+						x: 0,
+						y: 0,
+						refWidth: -40,
+						refHeight: '100%',
+					},
+					root: {
+						title: 'machine:' + this.rects[index][i].text,
+					}
+				});
+			}
 		}
 		for(let i = 0;i < this.ovals[index].length;i++){
 			let oval = new joint.shapes.standard.Ellipse({
 				position: {x: this.ovals[index][i].x1,y : this.ovals[index][i].y1},
 				size: {width: this.ovals[index][i].x2+150,height: this.ovals[index][i].y2},
-				attrs: { body: { fill: 'blue' }, label: { text: this.ovals[index][i].text, fill: 'white' }}
+				attrs: { body: { fill: 'none',strokeWidth:1 }, label: { text: this.ovals[index][i].text, fill: '#000000' }}
 			});
 			ovalGraphList[i] = oval;
 		}
 		for(let i = 0;i < this.lines[index].length;i++){
 			let line = this.lines[index][i];
 			if(line.state === 0){
-				let rectFrom : Rect = line.from as Rect;
+				//let rectFrom : Rect = line.from as Rect;
 				let rectTo : Rect = line.to as Rect;
-				let rectFromIndex = -1;
+				//let rectFromIndex = -1;
 				let rectToIndex = -1;
 				for(let j = 0;j < this.rects[index].length;j++){
 					let tempRect : Rect = this.rects[index][j];
-					if(tempRect.text === rectFrom.text) rectFromIndex = j;
+					//if(tempRect.text === rectFrom.text) rectFromIndex = j;
 					if(tempRect.text === rectTo.text) rectToIndex = j;
 				}
 				let link = new joint.shapes.standard.Link({
-					source: { id: rectGraphList[rectFromIndex].id },
+					source: { id: machineElement.id },
 					target: { id: rectGraphList[rectToIndex].id },
 					});
 					link.appendLabel({
@@ -726,7 +458,17 @@ export class MainboardComponent implements OnInit {
 							}
 						}
 					});
-				this.graph.addCells([rectGraphList[rectFromIndex], rectGraphList[rectToIndex],link]);
+					link.attr({
+						line: {
+							strokeWidth: 1,
+							targetMarker:{
+								'fill': 'none',
+								'stroke': 'none',
+							}
+						},
+						
+					});
+				this.graph.addCells([rectGraphList[rectToIndex], machineElement,link]);
 			}
 			else if(line.state === 1){
 				let oval : Oval = line.from as Oval;
@@ -741,15 +483,9 @@ export class MainboardComponent implements OnInit {
 					let tempOval : Oval = this.ovals[index][j];
 					if(tempOval.text === oval.text) ovalIndex = j;
 				}
-				let link = new joint.dia.Link({
+				let link = new joint.shapes.standard.Link({
 					source: { id: rectGraphList[rectIndex].id },
 					target: { id: ovalGraphList[ovalIndex].id },
-					attrs:{
-						".connection":{
-							'stroke-width': '2',
-							'stroke-dasharray':'5 5'
-						}
-					}
 					});
 					link.appendLabel({
 						attrs: {
@@ -761,6 +497,17 @@ export class MainboardComponent implements OnInit {
 								fill: 'transparent'
 							}
 						}
+					});
+					link.attr({
+						line: {
+							strokeWidth: 1,
+							targetMarker:{
+								'fill': 'none',
+								'stroke': 'none',
+							},
+							strokeDasharray: '8,4',
+						},
+						
 					});
 				this.graph.addCells([rectGraphList[rectIndex],ovalGraphList[ovalIndex],link]);
 			}
@@ -796,6 +543,17 @@ export class MainboardComponent implements OnInit {
 								fill: 'transparent'
 							}
 						}
+					});
+					link.attr({
+						line: {
+							strokeWidth: 1,
+							targetMarker:{
+								'fill': 'black',
+								'stroke': 'black',
+							},
+							strokeDasharray: '8,4',
+						},
+						
 					});
 				this.graph.addCells([rectGraphList[rectIndex],ovalGraphList[ovalIndex],link]);
 			}
@@ -949,7 +707,6 @@ export class MainboardComponent implements OnInit {
 					this.constraints.push(from + ' ' + cons + ' ' + to);
 				}
 			}	
-			//this.router.navigate(['']);
 		});	
 	  }
 
@@ -964,7 +721,7 @@ export class MainboardComponent implements OnInit {
 			let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
 			let cons : string = constraint[1];
 			let to : string = 'int' + constraint[2].substring(0,constraint[2].indexOf(','));
-			console.log(from + ' ' + cons + ' ' + to);
+			//console.log(from + ' ' + cons + ' ' + to);
 			if((from + ' ' + cons + ' ' + to) === selectedCons){
 				parent.removeChild(child);
 			}
@@ -972,9 +729,36 @@ export class MainboardComponent implements OnInit {
 				newCookie = newCookie + constraints[i] + '/';
 			}
 		}
-		console.log(newCookie);
+		//console.log(newCookie);
 		document.cookie = newCookie;
 		location.reload(true);
 	}
 
+	next(){
+		if(!this.cookieService.check('step')){
+			this.cookieService.set('step','1');
+		} 
+		else if(+this.cookieService.get('step') > 2){
+			return;
+		}
+		else{
+			let step : number = +this.cookieService.get('step');
+			this.cookieService.set('step',(step + 1).toString());
+		}
+		this.step = +this.cookieService.get('step');
+	}
+
+	previous(){
+		if(!this.cookieService.check('step')){
+			return;
+		} 
+		else if(+this.cookieService.get('step') < 2){
+			return;
+		}
+		else{
+			let step : number = +this.cookieService.get('step');
+			this.cookieService.set('step',(step + -1).toString());
+		}
+		this.step = +this.cookieService.get('step');
+	}
 }

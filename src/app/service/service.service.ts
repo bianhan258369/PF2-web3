@@ -1,6 +1,6 @@
 import { Injectable, ErrorHandler } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import { Phenomenon } from '../entity/Phenomenon';
 import { Rect } from '../entity/Rect';
 import { Line } from '../entity/Line';
@@ -19,10 +19,13 @@ const httpOptions = {
 
 export class ServiceService {
   private serviceUrl = 'http://localhost:8080/client';
+  private stepEmit = new Subject<any>();
+  private mainStepEmit = new Subject<any>();
+  stepEmmited$ = this.stepEmit.asObservable();
+  mainStepEmmited$ = this.mainStepEmit.asObservable();
 
   constructor(private httpClient: HttpClient) {
   }
-
 
   getDiagramCount() : Observable<number>{
     return this.httpClient.get<number>(this.serviceUrl + '/getDiagramCount');

@@ -114,6 +114,10 @@
     text-decoration: none
 }
 
+#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL{
+	cursor: not-allowed;
+}
+
 #topbar nav{
 	position: relative;
 	float:left;
@@ -255,7 +259,7 @@
 }
 #rightbar button{
 	position: relative;
-	margin:0% 35% 8% 35%;/*ÉĎÓŇĎÂ×ó*/
+	margin:0% 5% 8% 5%;/*ÉĎÓŇĎÂ×ó*/
 	
 	display: inline-flex;
 	align-items: center;
