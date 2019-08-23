@@ -25,10 +25,12 @@
         </span>
     </li>
     <li *ngIf="step === 3"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
-    <li *ngIf="step !== 3"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>	
-    <li><button class="button" id="Sace">Save</button></li>
+    <li *ngIf="step !== 3"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
+    <li><button class="button" id="Save">Save</button></li>
     <li><button class="button" id="SemanticCheck">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	
+    <li *ngIf="step === 4"><button class="button" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</button></li>
+    <li *ngIf="step !== 4"><button class="button" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</button></li>	
   </ul>
   </nav>
 </div> 
@@ -51,21 +53,25 @@
             <li style="background:#CFD8DC">&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:Read the Ontology File</li>	
             <li>&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 2">
             <li >&nbsp;Step 1:Read the Project File</li>
             <li style="background:#CFD8DC">&nbsp;Step 2:Read the Ontology File</li>	
             <li>&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 3">
             <li >&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:Read the Ontology File</li>	
             <li style="background:#CFD8DC">&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step > 3">
             <li >&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:Read the Ontology File</li>	
             <li>&nbsp;Step 3:Manually Add Constraints</li>
+            <li style="background:#CFD8DC">&nbsp;Finish</li>
           </ul>
         </div>
       </li><br>

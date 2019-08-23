@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RightbarComponent } from './rightbar.component';
+import { ProgressionComponent } from './progression.component';
 
-describe('RightbarComponent', () => {
-  let component: RightbarComponent;
-  let fixture: ComponentFixture<RightbarComponent>;
+describe('ProgressionComponent', () => {
+  let component: ProgressionComponent;
+  let fixture: ComponentFixture<ProgressionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RightbarComponent ]
+      declarations: [ ProgressionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RightbarComponent);
+    fixture = TestBed.createComponent(ProgressionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

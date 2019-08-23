@@ -85,6 +85,9 @@ export class MainboardComponent implements OnInit {
 	this.getRectAndPhenomenonList();
 	this.getDiagramList();
 	var that = this;
+	if(!this.cookieService.check('step')){
+		this.cookieService.set('step','1');
+	}
 	this.step = +this.cookieService.get('step');
 	that.interval = setInterval(function(){
 		clearInterval(that.interval);
@@ -738,7 +741,7 @@ export class MainboardComponent implements OnInit {
 		if(!this.cookieService.check('step')){
 			this.cookieService.set('step','1');
 		} 
-		else if(+this.cookieService.get('step') > 2){
+		else if(+this.cookieService.get('step') > 3){
 			return;
 		}
 		else{
@@ -760,5 +763,10 @@ export class MainboardComponent implements OnInit {
 			this.cookieService.set('step',(step + -1).toString());
 		}
 		this.step = +this.cookieService.get('step');
+	}
+
+	nextMainStep(){
+		this.cookieService.set('mainStep','ClockCheckFinished');
+		location.href="http://localhost:4200/workflow";
 	}
 }

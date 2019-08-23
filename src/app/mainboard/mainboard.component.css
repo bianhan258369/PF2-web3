@@ -114,7 +114,7 @@
     text-decoration: none
 }
 
-#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL{
+#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep{
 	cursor: not-allowed;
 }
 

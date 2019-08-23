@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DrawingboardComponent } from './drawingboard.component';
+import { SecurityComponent } from './security.component';
 
-describe('DrawingboardComponent', () => {
-  let component: DrawingboardComponent;
-  let fixture: ComponentFixture<DrawingboardComponent>;
+describe('SecurityComponent', () => {
+  let component: SecurityComponent;
+  let fixture: ComponentFixture<SecurityComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DrawingboardComponent ]
+      declarations: [ SecurityComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DrawingboardComponent);
+    fixture = TestBed.createComponent(SecurityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

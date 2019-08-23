@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeftbarComponent } from './leftbar.component';
+import { DiagramDescriptionComponent } from './diagram-description.component';
 
-describe('LeftbarComponent', () => {
-  let component: LeftbarComponent;
-  let fixture: ComponentFixture<LeftbarComponent>;
+describe('DiagramDescriptionComponent', () => {
+  let component: DiagramDescriptionComponent;
+  let fixture: ComponentFixture<DiagramDescriptionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LeftbarComponent ]
+      declarations: [ DiagramDescriptionComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LeftbarComponent);
+    fixture = TestBed.createComponent(DiagramDescriptionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
