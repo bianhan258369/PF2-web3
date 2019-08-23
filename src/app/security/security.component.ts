@@ -15,7 +15,7 @@ export class SecurityComponent implements OnInit {
 
   nextMainStep(){
 		this.cookieService.set('mainStep','SecurityFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=security";
 	}
 
 }

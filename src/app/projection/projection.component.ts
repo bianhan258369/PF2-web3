@@ -15,7 +15,7 @@ export class ProjectionComponent implements OnInit {
 
   nextMainStep(){
 		this.cookieService.set('mainStep','ProjectionFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=projection";
 	}
 
 }

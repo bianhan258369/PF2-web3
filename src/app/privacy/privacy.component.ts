@@ -15,7 +15,7 @@ export class PrivacyComponent implements OnInit {
 
   nextMainStep(){
 		this.cookieService.set('mainStep','PrivacyFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=privacy";
 	}
 
 }

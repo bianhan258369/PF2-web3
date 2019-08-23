@@ -15,7 +15,7 @@ export class TextDescriptionComponent implements OnInit {
 
   nextMainStep(){
 		this.cookieService.set('mainStep','TextDescriptionFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=textdescription";
 	}
 
 }

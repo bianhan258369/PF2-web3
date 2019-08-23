@@ -767,6 +767,6 @@ export class MainboardComponent implements OnInit {
 
 	nextMainStep(){
 		this.cookieService.set('mainStep','ClockCheckFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=clockcheck";
 	}
 }

@@ -12,21 +12,22 @@ export class WorkflowComponent implements OnInit {
 
   paper : joint.dia.Paper;
   graph : joint.dia.Graph;
+  mainStep : string;
 
   constructor(private service : ServiceService,private cookieService : CookieService) {
    }
 
   ngOnInit() {
-    if(!this.cookieService.check('mainStep')){
-      this.cookieService.set('mainStep','start');
-    }
     this.initPaper();
-    console.log(this.cookieService.get('mainStep'));
   }
 
   initPaper() : void{
-    let mainStep : string = this.cookieService.get('mainStep');
-		this.graph = new joint.dia.Graph();
+    if(location.search.indexOf('?') === -1) this.mainStep = 'start';
+		else{
+      this.mainStep = location.search.substring(6);//http://.......?from=.....
+    }
+    console.log(this.mainStep);
+    this.graph = new joint.dia.Graph()
 		let d = $("#content");
 		let wid = d.width();
     let hei =d.height();
@@ -87,26 +88,26 @@ export class WorkflowComponent implements OnInit {
       attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: 'Clock Check', fill: '#000000' }}
     });
     let privacyFinish = new joint.shapes.standard.Ellipse({
-      position: {x: 300, y: 500},
+      position: {x: 325, y: 500},
 			size: {width: 50,height: 50},
 			attrs: { body: { fill: 'none',strokeWidth:1}, label: { text: 'Finish', fill: '#000000' }}
     });
     let securityFinish = new joint.shapes.standard.Ellipse({
-      position: {x: 500, y: 500},
+      position: {x: 525, y: 500},
 			size: {width: 50,height: 50},
 			attrs: { body: { fill: 'none',strokeWidth:1}, label: { text: 'Finish', fill: '#000000' }}
     });
     let progressionFinish = new joint.shapes.standard.Ellipse({
-      position: {x: 700, y: 500},
+      position: {x: 725, y: 500},
 			size: {width: 50,height: 50},
 			attrs: { body: { fill: 'none',strokeWidth:1}, label: { text: 'Finish', fill: '#000000' }}
     });
     let clockcheckFinish = new joint.shapes.standard.Ellipse({
-      position: {x: 900, y: 625},
+      position: {x: 925, y: 625},
 			size: {width: 50,height: 50},
 			attrs: { body: { fill: 'none',strokeWidth:1}, label: { text: 'Finish', fill: '#000000' }}
     });
-    if(mainStep === 'start'){
+    if(this.mainStep === 'start'){
       rect1.attr({
         body:{
           stroke:'red',
@@ -118,7 +119,7 @@ export class WorkflowComponent implements OnInit {
         }
       })
     }
-    if(mainStep === 'DiagramDescriptionFinished'){
+    if(this.mainStep === 'diagramdescription'){
       rect3.attr({
         body:{
           stroke:'red',
@@ -130,7 +131,7 @@ export class WorkflowComponent implements OnInit {
         }
       })
     }
-    if(mainStep === 'TextDescriptionFinished'){
+    if(this.mainStep === 'textdescription'){
       rect5.attr({
         body:{
           stroke:'red',
@@ -142,35 +143,35 @@ export class WorkflowComponent implements OnInit {
         }
       })
     }
-    if(mainStep === 'ProjectionFinished'){
+    if(this.mainStep === 'projection'){
       rect7.attr({
         body:{
           stroke:'red',
         }
       })
     }
-    if(mainStep === 'PrivacyFinished'){
+    if(this.mainStep === 'privacy'){
       privacyFinish.attr({
         body:{
           stroke:'red',
         }
       })
     }
-    if(mainStep === 'SecurityFinished'){
+    if(this.mainStep === 'security'){
       securityFinish.attr({
         body:{
           stroke:'red',
         }
       })
     }
-    if(mainStep === 'ProgressionFinished'){
+    if(this.mainStep === 'progression'){
       progressionFinish.attr({
         body:{
           stroke:'red',
         }
       })
     }
-    if(mainStep === 'ClockCheckFinished'){
+    if(this.mainStep === 'clockcheck'){
       clockcheckFinish.attr({
         body:{
           stroke:'red',
@@ -314,7 +315,7 @@ export class WorkflowComponent implements OnInit {
     this.paper.on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
 			var currentElement = elementView.model;//currentElement:the element which you double click on
       let elementText : string = currentElement.attr().label.text;
-      if(mainStep === 'start'){
+      if(that.mainStep === 'start'){
         if(elementText === 'Text Description'){
           location.href='http://localhost:4200/textdescription';
         }
@@ -322,7 +323,7 @@ export class WorkflowComponent implements OnInit {
           location.href='http://localhost:4200/diagramdescription';
         }
       }
-      else if(mainStep === 'TextDescriptionFinished'){
+      else if(that.mainStep === 'textdescription'){
         if(elementText === 'Privacy'){
           location.href='http://localhost:4200/privacy';
         }
@@ -330,7 +331,7 @@ export class WorkflowComponent implements OnInit {
           location.href='http://localhost:4200/security';
         }
       }
-      else if(mainStep === 'DiagramDescriptionFinished'){
+      else if(that.mainStep === 'diagramdescription'){
         if(elementText === 'Projection'){
           location.href='http://localhost:4200/projection';
         }
@@ -338,7 +339,7 @@ export class WorkflowComponent implements OnInit {
           location.href='http://localhost:4200/progression';
         }
       }
-      else if(mainStep === 'ProjectionFinished'){
+      else if(that.mainStep === 'projection'){
         if(elementText === 'Clock Check'){
           location.href='http://localhost:4200';
         }
@@ -351,25 +352,29 @@ export class WorkflowComponent implements OnInit {
   }
   
   previousMainStep(){
-    if(this.cookieService.get('mainStep') === 'start'){
+    if(location.search.indexOf('?') === -1){
       return;
     }
-    else if(this.cookieService.get('mainStep') === 'TextDescriptionFinished' || this.cookieService.get('mainStep') === 'DiagramDescriptionFinished'){
-      this.cookieService.set('mainStep','start');
+    else{
+      if(location.search.substring(1).indexOf("textdescription") !== -1 || location.search.substring(1).indexOf("diagramdescription") !== -1){
+        this.mainStep = 'start';
+      }
+      else if(location.search.substring(1).indexOf("progression") !== -1 || location.search.substring(1).indexOf("projection") !== -1){
+        this.mainStep = 'diagramdescription';
+      }
+      else if(location.search.substring(1).indexOf("clockcheck") !== -1){
+        this.mainStep = 'projection';
+      }
+      else if(location.search.substring(1).indexOf("privacy") !== -1 || location.search.substring(1).indexOf("security") !== -1){
+        this.mainStep = 'textdescription';
+      }
     }
-    else if(this.cookieService.get('mainStep') === 'ProgressionFinished' || this.cookieService.get('mainStep') === 'ProjectionFinished'){
-      this.cookieService.set('mainStep','DiagramDescriptionFinished');
+    if(this.mainStep === 'start'){
+      location.href = 'http://localhost:4200/workflow'
     }
-    else if(this.cookieService.get('mainStep') === 'ClockCheckFinished'){
-      this.cookieService.set('mainStep','ProjectionFinished');
+    else {
+      location.href = 'http://localhost:4200/workflow?from=' + this.mainStep;
     }
-    else if(this.cookieService.get('mainStep') === 'PrivacyFinished'){
-      this.cookieService.set('mainStep','TextDescriptionFinished');
-    }
-    else if(this.cookieService.get('mainStep') === 'SecurityFinished'){
-      this.cookieService.set('mainStep','TextDescriptionFinished');
-    }
-    location.reload();
   }
 
 }

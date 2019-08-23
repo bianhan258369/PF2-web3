@@ -15,7 +15,7 @@ export class DiagramDescriptionComponent implements OnInit {
 
   nextMainStep(){
 		this.cookieService.set('mainStep','DiagramDescriptionFinished');
-		location.href="http://localhost:4200/workflow";
+		location.href="http://localhost:4200/workflow?from=diagramdescription";
 	}
 
 }
