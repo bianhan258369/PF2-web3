@@ -13,6 +13,7 @@ import { Scenario } from '../entity/Scenario';
 import { RouterLink, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { stringify } from 'querystring';
 
 
 @Component({
@@ -657,7 +658,7 @@ export class MainboardComponent implements OnInit {
 				this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);		
 			}	
 		}
-		let constraints : string[] = document.cookie.split('/');
+		let constraints : string[] = this.cookieService.get('constraints').split('/');
 		if(constraints.length !== 0){
 			for(let i = 0;i < constraints.length - 1;i++){
 				let index2 : number = +constraints[i].substring(0, constraints[i].indexOf(':'));
@@ -675,21 +676,38 @@ export class MainboardComponent implements OnInit {
 						if(tempInteraction.number === fromNum && tempInteraction.state === fromState) interactionFromIndex = j;
 						if(tempInteraction.number === toNum && tempInteraction.state === toState) interactionToIndex = j;
 					}
-					let link = new joint.shapes.standard.Link();
-					link.source(ellipseGraphList[interactionFromIndex]);
-					link.target(ellipseGraphList[interactionToIndex]);
-					link.appendLabel({
-						attrs: {
-							text: {
-								text: cons,
-							},
-							body: {
-								stroke: 'transparent',
-								fill: 'transparent'
+					if(cons === 'StrictPre'){
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);	
+						link.attr({
+							line: {
+								strokeWidth: 1,
+								targetMarker:{
+									'fill': 'black',
+									'stroke': 'black',
+								}
+							},	
+						});
+						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}
+					else{
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);
+						link.appendLabel({
+							attrs: {
+								text: {
+									text: cons,
+								},
+								body: {
+									stroke: 'transparent',
+									fill: 'transparent'
+								}
 							}
-						}
-					});
-					this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+						});
+						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}		
 				}
 			}
 		}
@@ -699,9 +717,9 @@ export class MainboardComponent implements OnInit {
 	getConstraints() : void{
 		this.service.getOWLConstrainList().subscribe(data=>{
 			this.constraints = data;
-			if(document.cookie.length !== 0){
+			if(this.cookieService.get('constraints').length !== 0){
 				//3:20,0 StrictPre 21,0/4:
-				let constraints : string[] = document.cookie.split('/');
+				let constraints : string[] = this.cookieService.get('constraints').split('/');
 				for(let i = 0;i < constraints.length - 1;i++){
 					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
 					let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
@@ -718,7 +736,7 @@ export class MainboardComponent implements OnInit {
 		let parent = document.getElementById('OtherConstraint');
 		let child = document.getElementById('consAndBut' + index);
 		let selectedCons = document.getElementById('cons' + index).innerText;
-		let constraints : string[] = document.cookie.split('/');
+		let constraints : string[] = this.cookieService.get('constraints').split('/');
 		for(let i = 0;i < constraints.length - 1;i++){
 			let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
 			let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
@@ -733,7 +751,8 @@ export class MainboardComponent implements OnInit {
 			}
 		}
 		//console.log(newCookie);
-		document.cookie = newCookie;
+		//document.cookie = newCookie;
+		this.cookieService.set('constraints',newCookie);
 		location.reload(true);
 	}
 
@@ -768,5 +787,42 @@ export class MainboardComponent implements OnInit {
 	nextMainStep(){
 		this.cookieService.set('mainStep','ClockCheckFinished');
 		location.href="http://localhost:4200/workflow?from=clockcheck";
+	}
+
+	saveConstraintsTxt() : void{
+		var str = '';
+		var ints = new Array<number>();
+		for(let i = 0;i < this.diagramCount;i++){
+			for(let j = 0;j < this.interactions[i].length;j++){
+				if(ints.indexOf(this.interactions[i][j].number) === -1) ints.push(this.interactions[i][j].number);
+			}
+		}
+		for(let i = 0;i < ints.length;i++){
+			if(i!==ints.length - 1) str = str + 'int' + ints[i] + ',';
+			else str = str + 'int' + ints[i] + ';,';
+		} 
+		str = str + ',';
+		for(let i = 0;i < this.diagramCount;i++){
+			for(let j = 0;j < this.scenarios[i].length;j++){
+				if(this.scenarios[i][j].state !==2 && this.scenarios[i][j].state !== 4){
+					str = str + 'int' + this.scenarios[i][j].from.number + ' StrcitPre ' + 'int' + this.scenarios[i][j].to.number + ';,';
+				}
+				else if(this.scenarios[i][j].state ===2){
+					str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + this.scenarios[i][j].to.number + ';,';
+				}
+				else {
+					str = str + 'int' + this.scenarios[i][j].to.number + ' StrcitPre ' + 'int' + this.scenarios[i][j].from.number + ';,';
+				}
+			}
+		}
+		for(let i = 0;i < this.constraints.length;i++){
+			str = str + this.constraints[i] + ';,';
+		}
+		this.service.exportConstraints(str);
+		alert('success');
+	}
+
+	downloadConstraints(){
+		this.service.downloadConstraints();
 	}
 }

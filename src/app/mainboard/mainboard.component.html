@@ -26,7 +26,8 @@
     </li>
     <li *ngIf="step === 3"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
     <li *ngIf="step !== 3"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
-    <li><button class="button" id="Save">Save</button></li>
+    <li><button class="button" id="Save" (click) = "saveConstraintsTxt()">Save</button></li>
+    <li><button class="button" id="Download Constraints" (click) = "downloadConstraints()">Download Constraints</button></li>
     <li><button class="button" id="SemanticCheck">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	
     <li *ngIf="step === 4"><button class="button" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</button></li>

@@ -5,11 +5,24 @@
     </select>
     <select name = "cons" [(ngModel)]="cons">
       <option value="StrictPre">StrictPre</option>
+      <option value="BoundedDiff">BoundedDiff</option>
+      <option value="nStrictPre">nStrictPre</option>
+      <option value="SubClock">SubClock</option>
+      <option value="Union">Union</option>
+      <option value="Alternate">Alternate</option>
+      <option value="Inf">Inf</option>
+      <option value="Sup">Sup</option>
     </select>
     <select name = "to" [(ngModel)]="toInt">
       <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
     </select>
-    <br><br>
+    <br>
+    <!--<input type="text" *ngIf="cons !== 'BoundedDiff'" class="boundedInput" name="boundedFrom" value="BoundedDiffFrom" [(ngModel)]="boundedFrom" hidden="true">-->
+    <input type="text" *ngIf="cons === 'BoundedDiff'" class="boundedInput" name="boundedFrom" value="BoundedDiffFrom" [(ngModel)]="boundedFrom">
+    <br>
+    <!--<input type="text" *ngIf="cons !== 'BoundedDiff'" class="boundedInput" name="boundedTo"  value="BoundedDiffTo" [(ngModel)]="boundedTo" hidden="true">-->
+    <input type="text" *ngIf="cons == 'BoundedDiff'" class="boundedInput" name="boundedTo"  value="BoundedDiffTo" [(ngModel)]="boundedTo">
+    <br><br><br><br><br><br>
     <input type="submit" value="Submit" (click) = "checkCons()">
     <input type="submit" value="Cancel" (click) = "goBack()">
   </form>

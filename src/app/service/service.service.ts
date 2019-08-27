@@ -75,9 +75,28 @@ export class ServiceService {
     return this.httpClient.get<Interaction[] | Scenario[]>(this.serviceUrl + '/getScenarioDiagramByDomain?index=' + index + '&domainText=' + domainText);
   }
 
-  canAddConstraint(index : number, from : string, to : string, cons : string) : Observable<boolean>{
-    return this.httpClient.get<boolean>(
-      this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons
-      );
+  canAddConstraint(index : number, from : string, to : string, cons : string, boundedFrom : string, boundedTo : string) : Observable<boolean>{
+    if(cons === 'StrictPre' || cons === 'nStrictPre'){
+      return this.httpClient.get<boolean>(
+        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons
+        );
+    }
+    else if(cons === 'BoundedDiff'){
+      return this.httpClient.get<boolean>(
+        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons + '&boundedFrom=' + boundedFrom + '&boundedTo=' + boundedTo
+        );
+    }
+  }
+
+  exportConstraints(constraints : string){
+    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxt?constraints=' + constraints).subscribe(response => {
+      console.log(response);
+    });
+  }
+
+  downloadConstraints(){
+    return this.httpClient.get<Blob>(this.serviceUrl+'/download').subscribe(response => {
+      console.log(response);
+    });
   }
 }
