@@ -823,6 +823,6 @@ export class MainboardComponent implements OnInit {
 	}
 
 	downloadConstraints(){
-		this.service.downloadConstraints();
+		window.open('http://localhost:8080/client/download');
 	}
 }

@@ -93,10 +93,4 @@ export class ServiceService {
       console.log(response);
     });
   }
-
-  downloadConstraints(){
-    return this.httpClient.get<Blob>(this.serviceUrl+'/download').subscribe(response => {
-      console.log(response);
-    });
-  }
 }
