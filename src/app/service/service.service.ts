@@ -89,7 +89,7 @@ export class ServiceService {
   }
 
   exportConstraints(constraints : string){
-    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxt?constraints=' + constraints).subscribe(response => {
+    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxtAndMyCCSL?constraints=' + constraints).subscribe(response => {
       console.log(response);
     });
   }

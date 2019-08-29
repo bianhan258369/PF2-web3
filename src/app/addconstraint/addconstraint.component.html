@@ -6,12 +6,13 @@
     <select name = "cons" [(ngModel)]="cons">
       <option value="StrictPre">StrictPre</option>
       <option value="BoundedDiff">BoundedDiff</option>
-      <option value="nStrictPre">nStrictPre</option>
+      <option value="Cause">Cause</option>
       <option value="SubClock">SubClock</option>
       <option value="Union">Union</option>
       <option value="Alternate">Alternate</option>
       <option value="Inf">Inf</option>
       <option value="Sup">Sup</option>
+      <option value="Coincidence">Coincidence</option>
     </select>
     <select name = "to" [(ngModel)]="toInt">
       <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>

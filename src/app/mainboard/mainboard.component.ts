@@ -691,6 +691,21 @@ export class MainboardComponent implements OnInit {
 						});
 						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
 					}
+					else if(cons === 'Coincidence'){
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);	
+						link.attr({
+							line: {
+								strokeWidth: 1,
+								targetMarker:{
+									'fill': 'none',
+									'stroke': 'none',
+								}
+							},	
+						});
+						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}
 					else{
 						let link = new joint.shapes.standard.Link();
 						link.source(ellipseGraphList[interactionFromIndex]);
@@ -792,6 +807,13 @@ export class MainboardComponent implements OnInit {
 	saveConstraintsTxt() : void{
 		var str = '';
 		var ints = new Array<number>();
+		for(let i = 0;i < this.constraints.length;i++){
+			var tempStr = this.constraints[i].split(' ');
+			var from = tempStr[0];
+			var to = tempStr[2];
+			if(from.includes('.') && !str.includes(from)) str = str + from + ',';
+			if(to.includes('.') && !str.includes(to)) str = str + to + ',';
+		}
 		for(let i = 0;i < this.diagramCount;i++){
 			for(let j = 0;j < this.interactions[i].length;j++){
 				if(ints.indexOf(this.interactions[i][j].number) === -1) ints.push(this.interactions[i][j].number);
@@ -805,13 +827,13 @@ export class MainboardComponent implements OnInit {
 		for(let i = 0;i < this.diagramCount;i++){
 			for(let j = 0;j < this.scenarios[i].length;j++){
 				if(this.scenarios[i][j].state !==2 && this.scenarios[i][j].state !== 4){
-					str = str + 'int' + this.scenarios[i][j].from.number + ' StrcitPre ' + 'int' + this.scenarios[i][j].to.number + ';,';
+					str = str + 'int' + this.scenarios[i][j].from.number + ' StrictPre ' + 'int' + this.scenarios[i][j].to.number + ';,';
 				}
 				else if(this.scenarios[i][j].state ===2){
-					str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + this.scenarios[i][j].to.number + ';,';
+					str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + 'int' +  this.scenarios[i][j].to.number + ';,';
 				}
 				else {
-					str = str + 'int' + this.scenarios[i][j].to.number + ' StrcitPre ' + 'int' + this.scenarios[i][j].from.number + ';,';
+					str = str + 'int' + this.scenarios[i][j].to.number + ' StrictPre ' + 'int' + this.scenarios[i][j].from.number + ';,';
 				}
 			}
 		}
@@ -823,6 +845,10 @@ export class MainboardComponent implements OnInit {
 	}
 
 	downloadConstraints(){
-		window.open('http://localhost:8080/client/download');
+		window.open('http://localhost:8080/client/downloadMyCCSLFile');
+	}
+
+	downloadTool(){
+		window.open('http://localhost:8080/client/downloadMyCCSLTool');
 	}
 }
