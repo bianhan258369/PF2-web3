@@ -44,7 +44,8 @@ export class MainboardComponent implements OnInit {
 	colours : Array<string>;
 	rectColourMap : Map<string, string>;//rectName,colour
     numberColourMap : Map<number, string>;//interactionNumber,colour
-    constraints : Array<string>;
+	constraints : Array<string>;
+	domainClockSpecification : Array<string>;
 
   uploader:FileUploader = new FileUploader({
     url:"http://localhost:8080/client/upload",
@@ -59,6 +60,7 @@ export class MainboardComponent implements OnInit {
 
   ngOnInit() {
 	this.colours = new Array<string>();
+	this.domainClockSpecification = new Array<string>();
 	this.rectColourMap = new Map<string, string>();
 	this.numberColourMap = new Map<number, string>();
 	this.rects = new Array<Array<Rect>>();
@@ -83,13 +85,22 @@ export class MainboardComponent implements OnInit {
 	this.getLineList();
 	this.getScenarioList();
 	this.getInteractionList();
-	this.getRectAndPhenomenonList();
+	this.getRectAndPhenomenonListAndInitDCS();
 	this.getDiagramList();
 	var that = this;
 	if(!this.cookieService.check('step')){
 		this.cookieService.set('step','1');
 	}
 	this.step = +this.cookieService.get('step');
+	if(this.step >= 2){
+		document.getElementById("details2DIV").hidden = false;
+	}
+	if(this.step >= 3){
+		document.getElementById("details3DIV").hidden = false;
+	}
+	if(this.step >= 5){
+		document.getElementById("OtherConstraintDIV").hidden = false;
+	}
 	that.interval = setInterval(function(){
 		clearInterval(that.interval);
 		that.initPaper();
@@ -135,11 +146,18 @@ export class MainboardComponent implements OnInit {
   }
 
 	change_Menu(index){//index from 1 to diagramCount * 2
-		if(index <= this.diagramCount)this.showClockDiagram(index - 1);
+		this.graph.off('change:position');
+		if(index <= this.diagramCount){
+			this.showClockDiagram(index - 1);
+		}
 		else{
 			this.showTimingDiagram(index - 1);
 		} 
 		this.currentDiagram = index - 1;
+		var element:any = document.getElementById("details1");
+		element.open = false;
+		element = document.getElementById("details3");
+		element.open = false;
 	}
 	
 	open1 = false;
@@ -207,14 +225,22 @@ export class MainboardComponent implements OnInit {
 				}
 		});
 		var that = this;
-		this.paper.on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
-			var currentElement = elementView.model;//currentElement:the element which you double click on
-			let index : number = that.currentDiagram;
-			let domainText : string = currentElement.attr().label.text;
-			let colour : string = that.rectColourMap.get(domainText);
-			let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
-			that.router.navigate(['/detail',indexAndDomainTextAndColour]);
-		});
+
+		if(this.step < 2){
+			this.paper.off('element:pointerdblclick');
+		}
+		if(this.step >= 2){
+			this.paper.on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
+				var currentElement = elementView.model;//currentElement:the element which you double click on
+				let index : number = that.currentDiagram;
+				let domainText : string = currentElement.attr().label.text;
+				let colour : string = that.rectColourMap.get(domainText);
+				let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
+				console.log(indexAndDomainTextAndColour);
+				that.router.navigate(['/detail',indexAndDomainTextAndColour]);
+			});
+		}
+		
 		this.paper.on('blank:mousewheel', (event,x ,y ,delta) => {
 			let scale = that.paper.scale();
 			that.paper.scale(scale.sx + (delta * 0.01), scale.sy + (delta * 0.01));
@@ -227,39 +253,56 @@ export class MainboardComponent implements OnInit {
 		});	
 	  }
 
-	getRectAndPhenomenonList() : void{
+	getRectAndPhenomenonListAndInitDCS() : void{
 		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
 				this.service.getRects(i).subscribe(data => {
+					console.log("init rectColourMap");
 					this.rects[i] = data;
 					for(let j = 0;j < this.rects[i].length;j++){
 						if(this.rects[i][j].state === 0){
 							if(this.rectColourMap.get(this.rects[i][j].text) === undefined){
 								let colour : string = this.colours.shift();
-								//console.log(colour);
 								this.rectColourMap.set(this.rects[i][j].text,colour);
 								this.colours.push(colour);
-							}	
+							}
+							this.domainClockSpecification[this.domainClockSpecification.length] = i + ',' + this.rects[i][j].text + ',' + this.rectColourMap.get(this.rects[i][j].text);
 						}						
 					}
+					this.service.getPhenomenonList(i).subscribe(phe => {
+						console.log("init numberColourMap");
+						this.phenomena[i] = phe;
+						for(let j = 0;j < this.phenomena[i].length;j++){
+							let tempPhenomenon : Phenomenon = this.phenomena[i][j];
+							let from : Rect = tempPhenomenon.from;
+							let to : Rect = tempPhenomenon.to;
+							if(from.state === 0){
+								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
+							}
+							else if(to.state === 0){
+								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
+							}
+						}
+					})
 				});
 			}
-			for(let i = 0;i < diagramCount;i++){
-				this.service.getPhenomenonList(i).subscribe(data => {
-					this.phenomena[i] = data;
-					for(let j = 0;j < this.phenomena[i].length;j++){
-						let tempPhenomenon : Phenomenon = this.phenomena[i][j];
-						let from : Rect = tempPhenomenon.from;
-						let to : Rect = tempPhenomenon.to;
-						if(from.state === 0){
-							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
-						}
-						else if(to.state === 0){
-							this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
-						}
-					}
-				})
-			}
+			// for(let i = 0;i < diagramCount;i++){
+			// 	this.service.getPhenomenonList(i).subscribe(phe => {
+			// 		console.log("init numberColourMap");
+			// 		this.phenomena[i] = phe;
+			// 		for(let j = 0;j < this.phenomena[i].length;j++){
+			// 			let tempPhenomenon : Phenomenon = this.phenomena[i][j];
+			// 			let from : Rect = tempPhenomenon.from;
+			// 			let to : Rect = tempPhenomenon.to;
+			// 			if(from.state === 0){
+			// 				this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
+			// 			}
+			// 			else if(to.state === 0){
+			// 				this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
+			// 			}
+			// 		}
+			// 	})
+			// }
 		});	
 	}
 
@@ -431,20 +474,17 @@ export class MainboardComponent implements OnInit {
 			let oval = new joint.shapes.standard.Ellipse({
 				position: {x: this.ovals[index][i].x1,y : this.ovals[index][i].y1},
 				size: {width: this.ovals[index][i].x2+150,height: this.ovals[index][i].y2},
-				attrs: { body: { fill: 'none',strokeWidth:1 }, label: { text: this.ovals[index][i].text, fill: '#000000' }}
+				attrs: { body: { fill: 'none',strokeWidth:1,strokeDasharray : '10,5' }, label: { text: this.ovals[index][i].text, fill: '#000000' }}
 			});
 			ovalGraphList[i] = oval;
 		}
 		for(let i = 0;i < this.lines[index].length;i++){
 			let line = this.lines[index][i];
 			if(line.state === 0){
-				//let rectFrom : Rect = line.from as Rect;
 				let rectTo : Rect = line.to as Rect;
-				//let rectFromIndex = -1;
 				let rectToIndex = -1;
 				for(let j = 0;j < this.rects[index].length;j++){
 					let tempRect : Rect = this.rects[index][j];
-					//if(tempRect.text === rectFrom.text) rectFromIndex = j;
 					if(tempRect.text === rectTo.text) rectToIndex = j;
 				}
 				let link = new joint.shapes.standard.Link({
@@ -571,6 +611,7 @@ export class MainboardComponent implements OnInit {
 		this.graph.clear();
 		let tempIndex : number = index - this.diagramCount;
 		let ellipseGraphList = new Array<joint.shapes.basic.Ellipse>();
+		let textList = new Array<joint.shapes.standard.Rectangle>();
 		for(let i = 0;i < this.rects[tempIndex].length;i++){
 			let tempRect : Rect = this.rects[tempIndex][i];
 			if(tempRect.state === 0){
@@ -579,7 +620,6 @@ export class MainboardComponent implements OnInit {
 					size:{width:40, height:20},
 					attrs:{body:{stroke : 'transparent', fill : 'transparent'}, label:{text: tempRect.shortName + ":"}}
 				})
-				//text.attr('label/text', tempRect.shortName);
 				let tag = new joint.shapes.basic.Rect({
 					position:{x:40,y:i * 25 - 25},
 					size:{width:40, height:20},
@@ -590,12 +630,54 @@ export class MainboardComponent implements OnInit {
 			}
 		}
 		for(let i = 0;i < this.interactions[tempIndex].length;i++){
-			let ellipse = new joint.shapes.basic.Ellipse({
-				position: {x: this.interactions[tempIndex][i].x1,y : this.interactions[tempIndex][i].y1},
-				size: {width: this.interactions[tempIndex][i].x2,height: this.interactions[tempIndex][i].y2},
-				attrs: { ellipse: { fill: this.numberColourMap.get(this.interactions[tempIndex][i].number) }, text: { text: 'int' + this.interactions[tempIndex][i].number, fill: 'white' }},
-			})
+			let text = new joint.shapes.standard.Rectangle();
+			let ellipse = null;
+			if(this.interactions[tempIndex][i].state === 1){
+				ellipse = new joint.shapes.basic.Ellipse({
+					position: {x: this.interactions[tempIndex][i].x1,y : this.interactions[tempIndex][i].y1},
+					size: {width: this.interactions[tempIndex][i].x2,height: this.interactions[tempIndex][i].y2},
+					attrs: { ellipse: {strokeWidth:1,strokeDasharray : '10,5', fill: this.numberColourMap.get(this.interactions[tempIndex][i].number) }, text: { text: 'int' + this.interactions[tempIndex][i].number, fill: 'white' },root:{id:'int' + this.interactions[tempIndex][i].state.toString() + this.interactions[tempIndex][i].number.toString()}},
+				})
+			}
+			else{
+				ellipse = new joint.shapes.basic.Ellipse({
+					position: {x: this.interactions[tempIndex][i].x1,y : this.interactions[tempIndex][i].y1},
+					size: {width: this.interactions[tempIndex][i].x2,height: this.interactions[tempIndex][i].y2},
+					attrs: { ellipse: {strokeWidth:1, fill: this.numberColourMap.get(this.interactions[tempIndex][i].number) }, text: { text: 'int' + this.interactions[tempIndex][i].number, fill: 'white' },root:{id:'int' + this.interactions[tempIndex][i].state.toString() + this.interactions[tempIndex][i].number.toString()}},
+				})
+			}
+			for(let j = 0;j < this.phenomena[tempIndex].length;j++){
+				if(this.phenomena[tempIndex][j].biaohao === this.interactions[tempIndex][i].number){
+					text.attr({
+						body: {
+							ref: 'label',
+							refX: -5,
+							refY: 0,
+							x: 0,
+							y: 0,
+							refWidth: 10,
+							refHeight: '120%',
+							fill: 'none',
+							stroke:'none',
+							strokeWidth: 1,
+						},
+						label: {
+							text: this.phenomena[tempIndex][j].name,
+							fontSize: 15,
+							textAnchor: 'middle',
+							textVerticalAnchor: 'middle',
+						},
+						root: {
+							id:this.interactions[tempIndex][i].state.toString() + this.interactions[tempIndex][i].number.toString(),
+						}
+					});
+					text.position(this.interactions[tempIndex][i].x1 + 80, this.interactions[tempIndex][i].y1 - 30);
+					text.addTo(this.graph);
+					break;
+				}
+			};
 			ellipseGraphList[i] = ellipse;
+			textList[i] = text;
 		}
 		for(let i = 0;i < this.scenarios[tempIndex].length;i++){
 			let scenario : Scenario = this.scenarios[tempIndex][i];
@@ -658,6 +740,19 @@ export class MainboardComponent implements OnInit {
 				this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);		
 			}	
 		}
+
+		var that = this;
+		this.graph.on('change:position', function(elementView, position) {
+			if(elementView.attributes.type === 'basic.Ellipse'){
+				var id = elementView.attributes.attrs.root.id.substring(3);
+				for(let n = 0;n < that.graph.getCells().length;n++){
+					if(that.graph.getCells()[n].attributes.type === 'standard.Rectangle' && that.graph.getCells()[n].attributes.attrs.root.id === id){
+						that.graph.getCells()[n].set("position",{x: position.x + 80,y: position.y - 30});
+					}
+				}
+			}
+		});
+
 		let constraints : string[] = this.cookieService.get('constraints').split('/');
 		if(constraints.length !== 0){
 			for(let i = 0;i < constraints.length - 1;i++){
@@ -735,12 +830,14 @@ export class MainboardComponent implements OnInit {
 			if(this.cookieService.get('constraints').length !== 0){
 				//3:20,0 StrictPre 21,0/4:
 				let constraints : string[] = this.cookieService.get('constraints').split('/');
+				console.log(this.cookieService.get('constraints'));
 				for(let i = 0;i < constraints.length - 1;i++){
+					let index = constraints[i].substring(0,constraints[i].indexOf(':'));
 					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-					let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
+					let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
 					let cons : string = constraint[1];
-					let to : string = 'int' + constraint[2].substring(0,constraint[2].indexOf(','));
-					this.constraints.push(from + ' ' + cons + ' ' + to);
+					let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+					this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to);
 				}
 			}	
 		});	
@@ -753,12 +850,14 @@ export class MainboardComponent implements OnInit {
 		let selectedCons = document.getElementById('cons' + index).innerText;
 		let constraints : string[] = this.cookieService.get('constraints').split('/');
 		for(let i = 0;i < constraints.length - 1;i++){
+			let tempIndex = +constraints[i].substring(0, constraints[i].indexOf(':'));
 			let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-			let from : string = 'int' + constraint[0].substring(0,constraint[0].indexOf(','));
+			let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
 			let cons : string = constraint[1];
-			let to : string = 'int' + constraint[2].substring(0,constraint[2].indexOf(','));
-			//console.log(from + ' ' + cons + ' ' + to);
-			if((from + ' ' + cons + ' ' + to) === selectedCons){
+			let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+			console.log(selectedCons);
+			console.log('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to)
+			if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to) === selectedCons){
 				parent.removeChild(child);
 			}
 			else{
@@ -775,12 +874,34 @@ export class MainboardComponent implements OnInit {
 		if(!this.cookieService.check('step')){
 			this.cookieService.set('step','1');
 		} 
-		else if(+this.cookieService.get('step') > 3){
+		else if(+this.cookieService.get('step') > 7){
 			return;
 		}
 		else{
 			let step : number = +this.cookieService.get('step');
 			this.cookieService.set('step',(step + 1).toString());
+			if(step === 1){
+				document.getElementById("details2DIV").hidden = false;
+				var that = this;
+				this.paper.on('element:pointerdblclick', function(elementView) {//pointerdblclick : double click
+					var currentElement = elementView.model;//currentElement:the element which you double click on
+					let index : number = that.currentDiagram;
+					let domainText : string = currentElement.attr().label.text;
+					let colour : string = that.rectColourMap.get(domainText);
+					let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
+					console.log(indexAndDomainTextAndColour);
+					that.router.navigate(['/detail',indexAndDomainTextAndColour]);
+				});
+			}
+			if(step === 2){
+				document.getElementById("details3DIV").hidden = false;
+			}
+			if(step === 3){
+				this.ruleBasedCheck();
+			}
+			if(step === 4){
+				document.getElementById("OtherConstraintDIV").hidden = false;
+			}
 		}
 		this.step = +this.cookieService.get('step');
 	}
@@ -794,7 +915,17 @@ export class MainboardComponent implements OnInit {
 		}
 		else{
 			let step : number = +this.cookieService.get('step');
-			this.cookieService.set('step',(step + -1).toString());
+			this.cookieService.set('step',(step -1).toString());
+			if(step === 2){
+				document.getElementById("details2DIV").hidden = true;
+				this.paper.off('element:pointerdblclick');
+			}
+			if(step === 3){
+				document.getElementById("details3DIV").hidden = true;
+			}
+			if(step === 5){
+				document.getElementById("OtherConstraintDIV").hidden = true;
+			}
 		}
 		this.step = +this.cookieService.get('step');
 	}
@@ -806,9 +937,10 @@ export class MainboardComponent implements OnInit {
 
 	saveConstraintsTxt() : void{
 		var str = '';
+		var addedConstraints = '';
 		var ints = new Array<number>();
 		for(let i = 0;i < this.constraints.length;i++){
-			var tempStr = this.constraints[i].split(' ');
+			var tempStr = this.constraints[i].substr(this.constraints[i].indexOf(':')+1).split(' ');
 			var from = tempStr[0];
 			var to = tempStr[2];
 			if(from.includes('.') && !str.includes(from)) str = str + from + ',';
@@ -839,8 +971,9 @@ export class MainboardComponent implements OnInit {
 		}
 		for(let i = 0;i < this.constraints.length;i++){
 			str = str + this.constraints[i] + ';,';
+			addedConstraints = addedConstraints + this.constraints[i] + ',';
 		}
-		this.service.exportConstraints(str);
+		this.service.exportConstraints(str,addedConstraints);
 		alert('success');
 	}
 
@@ -850,5 +983,55 @@ export class MainboardComponent implements OnInit {
 
 	downloadTool(){
 		window.open('http://localhost:8080/client/downloadMyCCSLTool');
+	}
+
+	showDomainClockSpecification(str : string){
+		var element1 : any = document.getElementById("details1");
+		var element2 : any = document.getElementById("details2");
+		var element3 : any = document.getElementById("details3");
+		element1.open = false;
+		element2.open = false;
+		element3.open = false;
+		this.router.navigate(['/detail',str]);
+	}
+
+	details1Click(){
+		var element1 : any = document.getElementById("details2");
+		var element2 : any = document.getElementById("details3");
+		element1.open = false;
+		element2.open = false;
+	}
+
+	details2Click(){
+		var element1 : any = document.getElementById("details1");
+		var element2 : any = document.getElementById("details3");
+		element1.open = false;
+		element2.open = false;
+	}
+
+	details3Click(){
+		var element1 : any = document.getElementById("details1");
+		var element2 : any = document.getElementById("details2");
+		element1.open = false;
+		element2.open = false;
+	}
+
+	ruleBasedCheck(){
+		this.service.ruleBasedCheck().subscribe(data => {
+			if(data["circle"] === '') return;
+			let circle = data["circle"];
+			let circles : Array<string> = circle.split(';');
+			var tip = "TD";
+			for(let i = circles.length - 1;i >= 0;i-- ){
+				if(i === circles.length - 1) tip = tip + (+circles[i] + 1) + '  ';
+				else{
+					tip = tip + 'int' + circles[i].split(',')[1] + ',state:' + circles[i].split(',')[0] + '-->';
+				}
+			}
+			tip = tip + 'int' + circles[1].split(',')[1] + ',state:' + circles[1].split(',')[0];
+			tip = tip + ' is a circle';
+			//this.previous();
+			//alert(tip);
+		});
 	}
 }

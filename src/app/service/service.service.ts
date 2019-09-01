@@ -88,9 +88,13 @@ export class ServiceService {
     }
   }
 
-  exportConstraints(constraints : string){
-    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxtAndMyCCSL?constraints=' + constraints).subscribe(response => {
+  exportConstraints(constraints : string, addedConstraints : string){
+    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxtAndXMLAndMyCCSL?constraints=' + constraints + '&addedConstraints=' + addedConstraints).subscribe(response => {
       console.log(response);
     });
+  }
+
+  ruleBasedCheck(){
+    return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck');
   }
 }

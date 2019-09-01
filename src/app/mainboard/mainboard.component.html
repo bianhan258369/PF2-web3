@@ -13,35 +13,64 @@
         <span>uploadXML</span>
       </span>
     </li>	
-    <li *ngIf="step===2" >
+    <li *ngIf="step===5" >
         <span class="btn btn-success owlfileinput-button">
           <span>uploadOWL</span>
           <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
         </span>
     </li>
-    <li *ngIf="step!==2" >
+    <li *ngIf="step!==5" >
         <span class="btn btn-success owlfileinput-button" id="CannotOWL">
           <span>uploadOWL</span>
         </span>
     </li>
-    <li *ngIf="step === 3"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
-    <li *ngIf="step !== 3"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
-    <li><button class="button" id="Save" (click) = "saveConstraintsTxt()">Save</button></li>
-    <li><button class="button" id="Download Constraints" (click) = "downloadConstraints()">DownloadCons</button></li>
-    <li><button class="button" id="SemanticCheck" (click) = "downloadTool()">Semantic Check</button></li>
+    <!--
+    <li><button class="button" id="generateDCS" (click) = "generateDomainClockSpecification()">generateDCS</button></li>
+    <li><button class="button" id="generateTD" (click) = "generateTimingDiagrams()">generateTD</button></li>
+    -->
+    <li *ngIf="step === 6"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
+    <li *ngIf="step !== 6"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
+    <li *ngIf="step >= 6"><button class="button" id="Save" (click) = "saveConstraintsTxt()">Save</button></li>
+    <li *ngIf="6 > step"><button class="button" id="CannotSave" (click) = "saveConstraintsTxt()" disabled="disabled">Save</button></li>
+    <li *ngIf="step === 7"><button class="button" id="DownloadConstraints" (click) = "downloadConstraints()">DownloadCons</button></li>
+    <li *ngIf="step !== 7"><button class="button" id="CannotDownloadConstraints" (click) = "downloadConstraints()" disabled="disabled">DownloadCons</button></li>
+    <li *ngIf="step === 7"><button class="button" id="SemanticCheck" (click) = "downloadTool()">Semantic Check</button></li>
+    <li *ngIf="step !== 7"><button class="button" id="CannotSemanticCheck" (click) = "downloadTool()" disabled="disabled">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	
-    <li *ngIf="step === 4"><button class="button" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</button></li>
-    <li *ngIf="step !== 4"><button class="button" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</button></li>	
+    <li *ngIf="step === 8"><button class="button" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</button></li>
+    <li *ngIf="step !== 8"><button class="button" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</button></li>	
   </ul>
   </nav>
 </div> 
 
 <div id = "drawingboard">
 	<div class="tab">
-		<ul>
-			<li *ngFor="let diagram of diagrams;let i = index" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</li>
-			<!--<li id = "AddConstraint" (click) = "showConstraintDialog()">Add Constraint</li>-->
-		</ul>
+    <div id="details1DIV">
+      <details id="details1" (click) = details1Click()>
+        <summary>Sub Clock Diagram</summary>
+        <ng-container *ngFor="let diagram of diagrams;let i = index">
+            <p *ngIf="diagramCount > i" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</p>
+        </ng-container>
+      </details>
+    </div>
+
+    <div id="details2DIV" hidden = "hidden">
+        <details id="details2" (click) = details2Click()>
+          <summary>Domain Clock Specification</summary>
+          <ng-container *ngFor="let str of domainClockSpecification;let i = index">
+              <p (click) = "showDomainClockSpecification(str)">SCD{{str.split(',')[0]}} : {{str.split(',')[1]}}</p>
+          </ng-container>
+        </details>
+      </div>
+
+    <div id="details3DIV" hidden = "hidden">
+      <details id="details3" (click) = details3Click()>
+          <summary>Timing Diagram</summary>
+          <ng-container *ngFor="let diagram of diagrams;let i = index">
+              <p *ngIf="i >= diagramCount" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</p>
+          </ng-container>
+      </details>
+    </div>
 	</div>
 	<div class="content" id="content1"></div>
 </div>
@@ -52,43 +81,101 @@
         <div class="content">
           <ul class="content" *ngIf="step === 1">
             <li style="background:#CFD8DC">&nbsp;Step 1:Read the Project File</li>
-            <li>&nbsp;Step 2:Read the Ontology File</li>	
-            <li>&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 2">
-            <li >&nbsp;Step 1:Read the Project File</li>
-            <li style="background:#CFD8DC">&nbsp;Step 2:Read the Ontology File</li>	
-            <li>&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li style="background:#CFD8DC">&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 3">
-            <li >&nbsp;Step 1:Read the Project File</li>
-            <li>&nbsp;Step 2:Read the Ontology File</li>	
-            <li style="background:#CFD8DC">&nbsp;Step 3:Manually Add Constraints</li>
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
           </ul>
-          <ul class="content" *ngIf="step > 3">
-            <li >&nbsp;Step 1:Read the Project File</li>
-            <li>&nbsp;Step 2:Read the Ontology File</li>	
-            <li>&nbsp;Step 3:Manually Add Constraints</li>
+
+          <ul class="content" *ngIf="step === 4">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
+            <li>&nbsp;Finish</li>
+          </ul>
+          <ul class="content" *ngIf="step === 5">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
+            <li>&nbsp;Finish</li>
+          </ul>
+          <ul class="content" *ngIf="step === 6">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
+            <li>&nbsp;Finish</li>
+          </ul>
+          <ul class="content" *ngIf="step === 7">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li style="background:#CFD8DC">&nbsp;Step 7:Performing Semantics Check</li>	
+            <li>&nbsp;Finish</li>
+          </ul>
+          <ul class="content" *ngIf="step > 7">
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li style="background:#CFD8DC">&nbsp;Finish</li>
           </ul>
         </div>
       </li><br>
       <button (click) = "previous()">PREVIOUS</button>
       <button (click) = "next()">NEXT</button>
-      <li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Added Constraints</li>
-      <ng-template #elseOpen1>
-        <li (click)="setOpen1()" class="title">&nbsp;-  Added Constraints</li>
-        <div class="content" id = "OtherConstraint">
-          <!--<table *ngIf="open1" class="content">Information</table>-->
-          <table *ngFor="let constraint of constraints;let i = index" class="content" id = "consAndBut{{i}}">
-            <span id = "cons{{i}}">{{constraint}}</span>
-            <button class="DeleteButton" (click)=deleteConstraint(i)>delete</button>
-          </table>
-        </div>
-      </ng-template>
+      <div id = "OtherConstraintDIV" hidden = "hidden">
+        <li *ngIf="!open1;else elseOpen1" (click)="setOpen1()" class="title">&nbsp;+  Added Constraints</li>
+        <ng-template #elseOpen1>
+          <li (click)="setOpen1()" class="title">&nbsp;-  Added Constraints</li>
+          <div class="content" id = "OtherConstraint" >
+            <table *ngFor="let constraint of constraints;let i = index" class="content" id = "consAndBut{{i}}">
+              <span id = "cons{{i}}">{{constraint}}</span>
+              <button class="DeleteButton" (click)=deleteConstraint(i)>delete</button>
+            </table>
+          </div>
+        </ng-template>
+      </div>
       <li *ngIf="!open2;else elseOpen2" (click)="setOpen2()" class="title">&nbsp;+  Phenomenon</li>
       <ng-template #elseOpen2>
         <li (click)="setOpen2()" class="title">&nbsp;-  Phenomenon</li>

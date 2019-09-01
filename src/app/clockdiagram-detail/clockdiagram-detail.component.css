@@ -43,6 +43,7 @@ ul li:hover{
 	height:96.5%;
 	float:left;
 	display:block;
+	z-index: 2;
 }
 content{
 	display:block;

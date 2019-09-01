@@ -114,7 +114,7 @@
     text-decoration: none
 }
 
-#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep{
+#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep,#topbar #CannotSave,#topbar #CannotDownloadConstraints,#topbar #CannotSemanticCheck{
 	cursor: not-allowed;
 }
 
@@ -218,27 +218,43 @@
     border-radius: 4px;
     overflow: hidden;
 }
-#drawingboard ul li:hover{
+
+#drawingboard details{
+	position: relative;
+	min-width: 3%;
+	float:left;
+	text-align:center;
+	display: block;
+	line-height: 20px;
+	padding: 4px 10px;
+	list-style-type:none;
+    cursor: pointer;
+    color: black;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+	overflow: hidden;
+	z-index: 1;
+}
+
+#drawingboard summary:hover{
 	opacity: 0.5;      
 	display: block;
 	cursor: pointer;
 }
-#drawingboard .content{
-	position: relative;
-	top:0;
-	left:0;
-	width:100%;
-	height:96.5%;
-	float:left;
-	display:none;
+
+#drawingboard p:hover{
+	opacity: 0.5;      
+	display: block;
+	cursor: pointer;
 }
 
 #drawingboard #content1{
-	position: relative;
-	top:0;
+	position: absolute;
+	top:4.8%;
 	left:0;
 	width:100%;
-	height:96.5%;
+	height:100%;
 	float:left;
 	display:block;
 }
