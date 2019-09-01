@@ -23,6 +23,7 @@ import { stringify } from 'querystring';
 })
 export class MainboardComponent implements OnInit {
 	interval
+	projectPath : string;
 	step : number;
 	currentDiagram : number;
 	diagramCount : number;
@@ -59,6 +60,9 @@ export class MainboardComponent implements OnInit {
    }
 
   ngOnInit() {
+	if(this.cookieService.check('projectPath')){
+		this.projectPath = this.cookieService.get('projectPath');
+	}
 	this.colours = new Array<string>();
 	this.domainClockSpecification = new Array<string>();
 	this.rectColourMap = new Map<string, string>();
@@ -89,9 +93,12 @@ export class MainboardComponent implements OnInit {
 	this.getDiagramList();
 	var that = this;
 	if(!this.cookieService.check('step')){
-		this.cookieService.set('step','1');
+		this.cookieService.set('step','0');
 	}
 	this.step = +this.cookieService.get('step');
+	if(this.step >= 1){
+		document.getElementById("details1DIV").hidden = false;
+	}
 	if(this.step >= 2){
 		document.getElementById("details2DIV").hidden = false;
 	}
@@ -204,7 +211,8 @@ export class MainboardComponent implements OnInit {
 	showConstraintDialog() : void{
 		let index : number = this.currentDiagram - this.diagramCount;
 		if(index >= 0 && index < this.diagramCount){
-			this.router.navigate(['/addConstraint',index]);	
+			console.log(this.projectPath);
+			this.router.navigate(['/addConstraint',index, this.projectPath]);	
 		}	
 	}
 
@@ -236,8 +244,7 @@ export class MainboardComponent implements OnInit {
 				let domainText : string = currentElement.attr().label.text;
 				let colour : string = that.rectColourMap.get(domainText);
 				let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
-				console.log(indexAndDomainTextAndColour);
-				that.router.navigate(['/detail',indexAndDomainTextAndColour]);
+				that.router.navigate(['/detail',indexAndDomainTextAndColour,that.projectPath]);
 			});
 		}
 		
@@ -248,15 +255,15 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getDiagramCount() : void{
-		this.service.getDiagramCount().subscribe(data=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(data=>{
 			this.diagramCount = data;
 		});	
 	  }
 
 	getRectAndPhenomenonListAndInitDCS() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getRects(i).subscribe(data => {
+				this.service.getRects(this.projectPath,i).subscribe(data => {
 					console.log("init rectColourMap");
 					this.rects[i] = data;
 					for(let j = 0;j < this.rects[i].length;j++){
@@ -269,7 +276,7 @@ export class MainboardComponent implements OnInit {
 							this.domainClockSpecification[this.domainClockSpecification.length] = i + ',' + this.rects[i][j].text + ',' + this.rectColourMap.get(this.rects[i][j].text);
 						}						
 					}
-					this.service.getPhenomenonList(i).subscribe(phe => {
+					this.service.getPhenomenonList(this.projectPath,i).subscribe(phe => {
 						console.log("init numberColourMap");
 						this.phenomena[i] = phe;
 						for(let j = 0;j < this.phenomena[i].length;j++){
@@ -307,9 +314,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getOvalList() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getOvals(i).subscribe(data => {
+				this.service.getOvals(this.projectPath,i).subscribe(data => {
 					this.ovals[i] = data;
 				})
 			}
@@ -317,9 +324,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getLineList() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getLines(i).subscribe(data => {
+				this.service.getLines(this.projectPath,i).subscribe(data => {
 					this.lines[i] = data;
 				})
 			}
@@ -327,9 +334,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getScenarioList() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getScenarios(i).subscribe(data => {
+				this.service.getScenarios(this.projectPath,i).subscribe(data => {
 					this.scenarios[i] = data;
 				})
 			}
@@ -337,9 +344,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getInteractionList() : void{
-		this.service.getDiagramCount().subscribe(diagramCount=>{
+		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getInteractions(i).subscribe(data => {
+				this.service.getInteractions(this.projectPath,i).subscribe(data => {
 					this.interactions[i] = data;
 				})
 			}
@@ -347,13 +354,13 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getDiagramList() : void{
-		this.service.getDiagrams().subscribe(dia=>{
+		this.service.getDiagrams(this.projectPath).subscribe(dia=>{
 			this.diagrams = dia;
-			this.service.getDiagramCount().subscribe(diagramCount=>{
+			this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 				for(let i = 0;i < diagramCount;i++){
 					this.diagrams[i].title = 'SCD' + (i + 1);
 					this.diagrams[i + diagramCount].title = 'TD' + (i + 1);
-					this.service.getRects(i).subscribe(data => {
+					this.service.getRects(this.projectPath,i).subscribe(data => {
 						this.rects[i] = data;
 						for(let j = 0;j < this.rects[i].length;j++){
 							if(this.rects[i][j].state === 0){
@@ -368,13 +375,13 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getAllPhenomena() : void{
-		this.service.getAllPhenomenonList().subscribe(data => {
+		this.service.getAllPhenomenonList(this.projectPath).subscribe(data => {
 			this.allPhenomena = data;
 		})
 	}
 
 	getAllReferences() : void{
-		this.service.getAllReferenceList().subscribe(data => {
+		this.service.getAllReferenceList(this.projectPath).subscribe(data => {
 			this.references = data;
 		})
 	}
@@ -825,7 +832,7 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getConstraints() : void{
-		this.service.getOWLConstrainList().subscribe(data=>{
+		this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
 			this.constraints = data;
 			if(this.cookieService.get('constraints').length !== 0){
 				//3:20,0 StrictPre 21,0/4:
@@ -872,7 +879,7 @@ export class MainboardComponent implements OnInit {
 
 	next(){
 		if(!this.cookieService.check('step')){
-			this.cookieService.set('step','1');
+			this.cookieService.set('step','0');
 		} 
 		else if(+this.cookieService.get('step') > 7){
 			return;
@@ -880,6 +887,9 @@ export class MainboardComponent implements OnInit {
 		else{
 			let step : number = +this.cookieService.get('step');
 			this.cookieService.set('step',(step + 1).toString());
+			if(step === 0){
+				document.getElementById("details1DIV").hidden = false;
+			}
 			if(step === 1){
 				document.getElementById("details2DIV").hidden = false;
 				var that = this;
@@ -890,7 +900,7 @@ export class MainboardComponent implements OnInit {
 					let colour : string = that.rectColourMap.get(domainText);
 					let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
 					console.log(indexAndDomainTextAndColour);
-					that.router.navigate(['/detail',indexAndDomainTextAndColour]);
+					that.router.navigate(['/detail',indexAndDomainTextAndColour, that.projectPath]);
 				});
 			}
 			if(step === 2){
@@ -910,12 +920,15 @@ export class MainboardComponent implements OnInit {
 		if(!this.cookieService.check('step')){
 			return;
 		} 
-		else if(+this.cookieService.get('step') < 2){
+		else if(+this.cookieService.get('step') < 1){
 			return;
 		}
 		else{
 			let step : number = +this.cookieService.get('step');
 			this.cookieService.set('step',(step -1).toString());
+			if(step === 1){
+				document.getElementById("details1DIV").hidden = true;
+			}
 			if(step === 2){
 				document.getElementById("details2DIV").hidden = true;
 				this.paper.off('element:pointerdblclick');
@@ -973,7 +986,7 @@ export class MainboardComponent implements OnInit {
 			str = str + this.constraints[i] + ';,';
 			addedConstraints = addedConstraints + this.constraints[i] + ',';
 		}
-		this.service.exportConstraints(str,addedConstraints);
+		this.service.exportConstraints(this.projectPath,str,addedConstraints);
 		alert('success');
 	}
 
@@ -992,7 +1005,7 @@ export class MainboardComponent implements OnInit {
 		element1.open = false;
 		element2.open = false;
 		element3.open = false;
-		this.router.navigate(['/detail',str]);
+		this.router.navigate(['/detail',str,this.projectPath]);
 	}
 
 	details1Click(){
@@ -1017,7 +1030,7 @@ export class MainboardComponent implements OnInit {
 	}
 
 	ruleBasedCheck(){
-		this.service.ruleBasedCheck().subscribe(data => {
+		this.service.ruleBasedCheck(this.projectPath).subscribe(data => {
 			if(data["circle"] === '') return;
 			let circle = data["circle"];
 			let circles : Array<string> = circle.split(';');
@@ -1033,5 +1046,13 @@ export class MainboardComponent implements OnInit {
 			//this.previous();
 			//alert(tip);
 		});
+	}
+
+	openProject(path : string){
+		//this.cookieService.deleteAll();
+		this.projectPath = path;
+		this.cookieService.set('step','1');
+		this.cookieService.set('projectPath', path);
+		location.reload(true);
 	}
 }

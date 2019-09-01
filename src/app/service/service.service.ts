@@ -27,74 +27,78 @@ export class ServiceService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getDiagramCount() : Observable<number>{
-    return this.httpClient.get<number>(this.serviceUrl + '/getDiagramCount');
+  getDiagramCount(path : string) : Observable<number>{
+    return this.httpClient.get<number>(this.serviceUrl + '/getDiagramCount?path=' + path);
   }
 
-  getRects(index : number) : Observable<Rect[]>{
-    return this.httpClient.get<Rect[]>(this.serviceUrl + '/getRectList?index=' + index);
+  getRects(path : string,index : number) : Observable<Rect[]>{
+    return this.httpClient.get<Rect[]>(this.serviceUrl + '/getRectList?index=' + index + '&path=' + path);
   }
 
-  getLines(index : number) : Observable<Line[]>{
-    return this.httpClient.get<Line[]>(this.serviceUrl + '/getLineList?index=' + index);
+  getLines(path : string,index : number) : Observable<Line[]>{
+    return this.httpClient.get<Line[]>(this.serviceUrl + '/getLineList?index=' + index + '&path=' + path);
   }
 
-  getOvals(index : number) : Observable<Oval[]>{
-    return this.httpClient.get<Oval[]>(this.serviceUrl + '/getOvalList?index=' + index);
+  getOvals(path : string,index : number) : Observable<Oval[]>{
+    return this.httpClient.get<Oval[]>(this.serviceUrl + '/getOvalList?index=' + index + '&path=' + path);
   }
 
-  getPhenomenonList(index : number) : Observable<Phenomenon[]>{
-    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getPhenomenonList?index=' + index);
+  getPhenomenonList(path : string,index : number) : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getPhenomenonList?index=' + index + '&path=' + path);
   }
 
-  getScenarios(index : number) : Observable<Scenario[]>{
-    return this.httpClient.get<Scenario[]>(this.serviceUrl + '/getScenarioList?index=' + index);
+  getScenarios(path : string,index : number) : Observable<Scenario[]>{
+    return this.httpClient.get<Scenario[]>(this.serviceUrl + '/getScenarioList?index=' + index + '&path=' + path);
   }
 
-  getInteractions(index : number) : Observable<Interaction[]>{
-    return this.httpClient.get<Interaction[]>(this.serviceUrl + '/getInteractionList?index=' + index);
+  getInteractions(path : string,index : number) : Observable<Interaction[]>{
+    return this.httpClient.get<Interaction[]>(this.serviceUrl + '/getInteractionList?index=' + index + '&path=' + path);
   }
 
-  getDiagrams() : Observable<Diagram[]>{
-    return this.httpClient.get<Diagram[]>(this.serviceUrl + '/getDiagramList');
+  getDiagrams(path : string) : Observable<Diagram[]>{
+    return this.httpClient.get<Diagram[]>(this.serviceUrl + '/getDiagramList?path=' + path);
   }
 
-  getOWLConstrainList() : Observable<string[]>{
-    return this.httpClient.get<string[]>(this.serviceUrl + '/getOWLConstraintList');
+  getOWLConstrainList(path : string) : Observable<string[]>{
+    return this.httpClient.get<string[]>(this.serviceUrl + '/getOWLConstraintList?path=' + path);
   }
 
-  getAllPhenomenonList() : Observable<Phenomenon[]>{
-    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllPhenomenonList');
+  getAllPhenomenonList(path : string) : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllPhenomenonList?path=' + path);
   }
 
-  getAllReferenceList() : Observable<Phenomenon[]>{
-    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllReferenceList');
+  getAllReferenceList(path : string) : Observable<Phenomenon[]>{
+    return this.httpClient.get<Phenomenon[]>(this.serviceUrl + '/getAllReferenceList?path=' + path);
   }
 
-  getScenarioDiagramByDomainText(index : number, domainText : string) : Observable<Interaction[] | Scenario[]>{
-    return this.httpClient.get<Interaction[] | Scenario[]>(this.serviceUrl + '/getScenarioDiagramByDomain?index=' + index + '&domainText=' + domainText);
+  getScenarioDiagramByDomainText(path : string,index : number, domainText : string) : Observable<Interaction[] | Scenario[]>{
+    return this.httpClient.get<Interaction[] | Scenario[]>(this.serviceUrl + '/getScenarioDiagramByDomain?index=' + index + '&domainText=' + domainText + '&path=' + path);
   }
 
-  canAddConstraint(index : number, from : string, to : string, cons : string, boundedFrom : string, boundedTo : string) : Observable<boolean>{
+  canAddConstraint(path : string,index : number, from : string, to : string, cons : string, boundedFrom : string, boundedTo : string) : Observable<boolean>{
     if(cons === 'StrictPre' || cons === 'nStrictPre'){
       return this.httpClient.get<boolean>(
-        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons
+        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons + '&path=' + path
         );
     }
     else if(cons === 'BoundedDiff'){
       return this.httpClient.get<boolean>(
-        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons + '&boundedFrom=' + boundedFrom + '&boundedTo=' + boundedTo
+        this.serviceUrl + '/canAddConstraint?index=' + index + '&from=' + from + '&to=' + to + '&cons=' + cons + '&boundedFrom=' + boundedFrom + '&boundedTo=' + boundedTo + '&path=' + path
         );
     }
   }
 
-  exportConstraints(constraints : string, addedConstraints : string){
-    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxtAndXMLAndMyCCSL?constraints=' + constraints + '&addedConstraints=' + addedConstraints).subscribe(response => {
+  exportConstraints(path : string,constraints : string, addedConstraints : string){
+    return this.httpClient.get(this.serviceUrl+'/saveConstraintsTxtAndXMLAndMyCCSL?constraints=' + constraints + '&addedConstraints=' + addedConstraints + '&path=' + path).subscribe(response => {
       console.log(response);
     });
   }
 
-  ruleBasedCheck(){
-    return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck');
+  ruleBasedCheck(path : string){
+    return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck&path=' + path);
+  }
+
+  getFileList(folderPath : string){
+    return this.httpClient.get(this.serviceUrl+'/showServerFiles?foldePath=' + folderPath);
   }
 }

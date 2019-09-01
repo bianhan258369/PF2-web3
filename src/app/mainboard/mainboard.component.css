@@ -114,7 +114,7 @@
     text-decoration: none
 }
 
-#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep,#topbar #CannotSave,#topbar #CannotDownloadConstraints,#topbar #CannotSemanticCheck{
+#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep,#topbar #CannotSave,#topbar #CannotDownloadConstraints,#topbar #CannotSemanticCheck, #topbar #CannotOpenProject{
 	cursor: not-allowed;
 }
 
@@ -247,6 +247,14 @@
 	opacity: 0.5;      
 	display: block;
 	cursor: pointer;
+}
+
+#drawingboard .details ::-webkit-details-marker {
+    display: none;
+}
+
+#drawingboard .details ::-moz-list-bullet {
+    font-size: 0;
 }
 
 #drawingboard #content1{

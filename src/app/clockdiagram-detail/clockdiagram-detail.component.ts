@@ -53,12 +53,13 @@ export class ClockdiagramDetailComponent implements OnInit {
 
   getScenarioDiagramByDomain() : void{
     let indexAndDomainTextAndColour : string = this.route.snapshot.paramMap.get('indexAndDomainTextAndColour');
+    let projectPath : string = this.route.snapshot.paramMap.get('projectPath');
     let splitted = indexAndDomainTextAndColour.split(',');
     let index : number = +splitted[0];
     let domainText : string = splitted[1];
     this.colour = splitted[2];
     domainText = domainText.replace("&","%26");
-    this.service.getScenarioDiagramByDomainText(index, domainText).subscribe(data=>{
+    this.service.getScenarioDiagramByDomainText(projectPath, index, domainText).subscribe(data=>{
       this.scenarioDiagram = data;
     });
   }

@@ -12,6 +12,7 @@ import { ProjectionComponent } from './projection/projection.component';
 import { ProgressionComponent } from './progression/progression.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { SecurityComponent } from './security/security.component';
+import { LoadprojectComponent } from './loadproject/loadproject.component';
 
 const routes: Routes = [
 
@@ -24,8 +25,9 @@ const routes: Routes = [
   { path: 'progression', component: ProgressionComponent},
   { path: 'workflow', component: WorkflowComponent},
   { path: 'mainboard', component: MainboardComponent},
-  { path: 'addConstraint/:index', component: AddconstraintComponent },
-  { path: 'detail/:indexAndDomainTextAndColour', component: ClockdiagramDetailComponent },
+  { path: 'addConstraint/:index/:projectPath', component: AddconstraintComponent },
+  { path: 'detail/:indexAndDomainTextAndColour/:projectPath', component: ClockdiagramDetailComponent },
+  { path: 'loadproject', component: LoadprojectComponent},
 ];
 
 @NgModule({

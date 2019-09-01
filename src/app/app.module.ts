@@ -23,6 +23,7 @@ import { ProjectionComponent } from './projection/projection.component';
 import { ProgressionComponent } from './progression/progression.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { SecurityComponent } from './security/security.component';
+import { LoadprojectComponent } from './loadproject/loadproject.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { SecurityComponent } from './security/security.component';
     ProgressionComponent,
     PrivacyComponent,
     SecurityComponent,
+    LoadprojectComponent,
   ],
   imports: [
     BrowserModule,

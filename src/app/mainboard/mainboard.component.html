@@ -2,24 +2,26 @@
   <img src="assets/icons/3.png">
   <nav>
   <ul>
-    <li *ngIf="step===1" >
+    <li *ngIf="step === 0"><button class="button" id="OpenProject" (click) = "openProject('asset/0-0-0-0-0-0-0-1')">Open</button></li>
+    <li *ngIf="step !== 0"><button class="button" id="CannotOpenProject" disabled="disabled" (click) = "openProject('asset/0-0-0-0-0-0-0-1')">Open</button></li>
+    <li *ngIf="step===0" >
       <span class="btn btn-success xmlfileinput-button">
         <span>uploadXML</span>
         <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)" accept="text/xml, application/xml" multiple >
       </span>
     </li>	
-    <li *ngIf="step!==1" >
+    <li *ngIf="step!==0" >
       <span class="btn btn-success xmlfileinput-button" id="CannotXML">
         <span>uploadXML</span>
       </span>
     </li>	
-    <li *ngIf="step===5" >
+    <li *ngIf="step===0" >
         <span class="btn btn-success owlfileinput-button">
           <span>uploadOWL</span>
           <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
         </span>
     </li>
-    <li *ngIf="step!==5" >
+    <li *ngIf="step!==0" >
         <span class="btn btn-success owlfileinput-button" id="CannotOWL">
           <span>uploadOWL</span>
         </span>
@@ -44,9 +46,10 @@
 </div> 
 
 <div id = "drawingboard">
-	<div class="tab">
-    <div id="details1DIV">
-      <details id="details1" (click) = details1Click()>
+  
+  <div class="tab">
+    <div id="details1DIV" hidden = "hidden">
+      <details id="details1" (click) = details1Click() class="details">
         <summary>Sub Clock Diagram</summary>
         <ng-container *ngFor="let diagram of diagrams;let i = index">
             <p *ngIf="diagramCount > i" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</p>
@@ -55,7 +58,7 @@
     </div>
 
     <div id="details2DIV" hidden = "hidden">
-        <details id="details2" (click) = details2Click()>
+        <details id="details2" (click) = details2Click() class="details">
           <summary>Domain Clock Specification</summary>
           <ng-container *ngFor="let str of domainClockSpecification;let i = index">
               <p (click) = "showDomainClockSpecification(str)">SCD{{str.split(',')[0]}} : {{str.split(',')[1]}}</p>
@@ -64,14 +67,39 @@
       </div>
 
     <div id="details3DIV" hidden = "hidden">
-      <details id="details3" (click) = details3Click()>
+      <details id="details3" (click) = details3Click() class="details">
           <summary>Timing Diagram</summary>
           <ng-container *ngFor="let diagram of diagrams;let i = index">
               <p *ngIf="i >= diagramCount" id = "lm{{i + 1}}" (click) = "change_Menu(i + 1)">{{diagram.title}} : {{diagram.machineName}}</p>
           </ng-container>
       </details>
     </div>
-	</div>
+
+    <!---项目选择  
+	<div id="OpenProject" class="OpenProject">		
+		<div class="table">
+			<span class="label">OpenProject:</span>
+			<button class="close" (click) = "close('OpenProject')">X</button>
+		</div>	
+		<div class="showPro">
+			<form id="op">
+				<ul *ngFor="let pro of projects">
+					<li [class.selected]="project===pro" (click)="search(pro)">{{pro}}
+						<ul *ngIf="project === pro">
+							<li *ngFor="let version of versions"><label><input type="radio" name="project" id="version" value="{{version}}">{{version}}</label></li>
+						</ul>
+					</li>
+				</ul>
+			</form>
+		</div>
+	   <div style="position: absolute;bottom:10px;">
+			<button class="button" (click)="open()">Open</button>
+			<button class="button" (click) = "close('OpenProject')">Cancel</button>
+	   </div>
+    </div>
+    ---> 
+  </div>
+  
 	<div class="content" id="content1"></div>
 </div>
 
@@ -79,7 +107,19 @@
     <ul>
       <li class="title">&nbsp;Process of Getting Time Sequences
         <div class="content">
+          <ul class="content" *ngIf="step === 0">
+            <li style="background:#CFD8DC">&nbsp;Start</li>
+            <li>&nbsp;Step 1:Read the Project File</li>
+            <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
+            <li>&nbsp;Step 3:generate Timing Diagrams</li>	
+            <li>&nbsp;Step 4:Rule Based Checking</li>	
+            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 6:Manually Add Constraints</li>
+            <li>&nbsp;Step 7:Performing Semantics Check</li>	
+            <li>&nbsp;Finish</li>
+          </ul>
           <ul class="content" *ngIf="step === 1">
+            <li>&nbsp;Start</li>
             <li style="background:#CFD8DC">&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -90,6 +130,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 2">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li style="background:#CFD8DC">&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -100,6 +141,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 3">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li style="background:#CFD8DC">&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -111,6 +153,7 @@
           </ul>
 
           <ul class="content" *ngIf="step === 4">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -121,6 +164,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 5">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -131,6 +175,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 6">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -141,6 +186,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step === 7">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
@@ -151,6 +197,7 @@
             <li>&nbsp;Finish</li>
           </ul>
           <ul class="content" *ngIf="step > 7">
+            <li>&nbsp;Start</li>
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
