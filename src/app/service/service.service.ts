@@ -99,6 +99,10 @@ export class ServiceService {
   }
 
   getFileList(folderPath : string){
-    return this.httpClient.get(this.serviceUrl+'/showServerFiles?foldePath=' + folderPath);
+    return this.httpClient.get(this.serviceUrl+'/showServerFiles?folderPath=' + folderPath);
+  }
+
+  getAddedConstraints(path : string){
+    return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML&path=' + path);
   }
 }

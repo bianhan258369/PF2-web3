@@ -1,6 +1,15 @@
 <div id="loadporject">
-    <details>
+    <form>
+      <details>
         <summary>asset</summary>
+          <select name="projects" [(ngModel)]="selectedFolder">
+            <option *ngFor="let folder of filelist" value="{{folder}}">{{folder}}</option>
+          </select>
+     </details>
+    <input type="submit" value="Submit" (click) = "loadProject()">
+    <input type="submit" value="Cancel" (click) = "goBack()">
+    </form>
+        <!--
         <details>
           <summary (click) = "getFileList(asset)">Nested</summary>
           <p>lolwat</p>
@@ -19,4 +28,5 @@
         </details>
         <p>lolwat</p>
       </details>
+      -->
 </div>

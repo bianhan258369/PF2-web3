@@ -91,6 +91,7 @@ export class MainboardComponent implements OnInit {
 	this.getInteractionList();
 	this.getRectAndPhenomenonListAndInitDCS();
 	this.getDiagramList();
+	this.getAddedConstraints();
 	var that = this;
 	if(!this.cookieService.check('step')){
 		this.cookieService.set('step','0');
@@ -386,6 +387,12 @@ export class MainboardComponent implements OnInit {
 		})
 	}
 
+	getAddedConstraints() : void{
+		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
+			console.log(data);
+		})
+	}
+
 	showClockDiagram(index : number) : void{
 		this.graph.clear();
 		var MachineElement = joint.dia.Element.define('examples.CustomTextElement', {
@@ -609,8 +616,6 @@ export class MainboardComponent implements OnInit {
 				this.graph.addCells([rectGraphList[rectIndex],ovalGraphList[ovalIndex],link]);
 			}
 		}
-		
-		
 	}
 
 	//index from diagramCount to 2 * diagramCount - 1
@@ -1048,11 +1053,7 @@ export class MainboardComponent implements OnInit {
 		});
 	}
 
-	openProject(path : string){
-		//this.cookieService.deleteAll();
-		this.projectPath = path;
-		this.cookieService.set('step','1');
-		this.cookieService.set('projectPath', path);
-		location.reload(true);
+	openProject(){
+		this.router.navigate(['/loadproject']);
 	}
 }
