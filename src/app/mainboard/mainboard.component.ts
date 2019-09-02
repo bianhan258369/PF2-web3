@@ -96,6 +96,9 @@ export class MainboardComponent implements OnInit {
 	if(!this.cookieService.check('step')){
 		this.cookieService.set('step','0');
 	}
+	if(this.cookieService.check('constraints')){
+		this.cookieService.set('step','6');
+	}
 	this.step = +this.cookieService.get('step');
 	if(this.step >= 1){
 		document.getElementById("details1DIV").hidden = false;
@@ -390,7 +393,6 @@ export class MainboardComponent implements OnInit {
 	getAddedConstraints() : void{
 		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
 			this.cookieService.set('constraints',data["constraints"]);
-			console.log(this.cookieService.get('constraints'));
 		})
 	}
 
@@ -1041,16 +1043,21 @@ export class MainboardComponent implements OnInit {
 			let circle = data["circle"];
 			let circles : Array<string> = circle.split(';');
 			var tip = "TD";
-			for(let i = circles.length - 1;i >= 0;i-- ){
-				if(i === circles.length - 1) tip = tip + (+circles[i] + 1) + '  ';
-				else{
+			tip = tip + (+circles[circles.length - 1] + 1) + ' ';
+			if(circles.length === 2){
+				tip = tip + circles[0];
+				this.previous();
+				alert(tip);
+			}
+			if(circles.length > 2){
+				for(let i = 0;i < circles.length - 1;i++ ){
 					tip = tip + 'int' + circles[i].split(',')[1] + ',state:' + circles[i].split(',')[0] + '-->';
 				}
-			}
-			tip = tip + 'int' + circles[1].split(',')[1] + ',state:' + circles[1].split(',')[0];
-			tip = tip + ' is a circle';
-			//this.previous();
-			//alert(tip);
+				tip = tip + 'int' + circles[0].split(',')[1] + ',state:' + circles[0].split(',')[0];
+				tip = tip + ' is a circle';
+				this.previous();
+				alert(tip);
+			}	
 		});
 	}
 

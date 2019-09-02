@@ -46,11 +46,13 @@ export class AddconstraintComponent implements OnInit {
   checkCons(){
     let index = +this.route.snapshot.paramMap.get('index'); 
     let projectPath = this.route.snapshot.paramMap.get('projectPath');
-    let fromInt : string = 'int' + this.fromInt.substring(0, this.fromInt.indexOf(','));
-    let toInt : string = 'int' + this.toInt.substring(0, this.toInt.indexOf(','));
+    //let fromInt : string = 'int' + this.fromInt.substring(0, this.fromInt.indexOf(','));
+    //let toInt : string = 'int' + this.toInt.substring(0, this.toInt.indexOf(','));
 
+    console.log(this.fromInt);
+    console.log(this.toInt);
     if(this.cons === "StrictPre" || this.cons === 'nStrictPre'){
-      this.service.canAddConstraint(projectPath,index, fromInt,toInt,this.cons,null,null).subscribe(data => {
+      this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,null,null).subscribe(data => {
         this.canAdd = data;
         if(!this.canAdd){
           this.location.back();
@@ -76,7 +78,7 @@ export class AddconstraintComponent implements OnInit {
         alert("Error Parameters");
       }
       else{
-        this.service.canAddConstraint(projectPath,index, fromInt,toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
+        this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
           this.canAdd = data;
           if(!this.canAdd){
             this.location.back();

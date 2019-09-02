@@ -34,8 +34,8 @@
     <li *ngIf="step !== 6"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
     <li *ngIf="step >= 6"><button class="button" id="Save" (click) = "saveConstraintsTxt()">Save</button></li>
     <li *ngIf="6 > step"><button class="button" id="CannotSave" (click) = "saveConstraintsTxt()" disabled="disabled">Save</button></li>
-    <li *ngIf="step === 7"><button class="button" id="DownloadConstraints" (click) = "downloadConstraints()">DownloadCons</button></li>
-    <li *ngIf="step !== 7"><button class="button" id="CannotDownloadConstraints" (click) = "downloadConstraints()" disabled="disabled">DownloadCons</button></li>
+    <li *ngIf="step >= 7"><button class="button" id="DownloadConstraints" (click) = "downloadConstraints()">DownloadCons</button></li>
+    <li *ngIf="7 > step"><button class="button" id="CannotDownloadConstraints" (click) = "downloadConstraints()" disabled="disabled">DownloadCons</button></li>
     <li *ngIf="step === 7"><button class="button" id="SemanticCheck" (click) = "downloadTool()">Semantic Check</button></li>
     <li *ngIf="step !== 7"><button class="button" id="CannotSemanticCheck" (click) = "downloadTool()" disabled="disabled">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	

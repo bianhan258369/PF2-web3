@@ -3,7 +3,7 @@
       <details>
         <summary>asset</summary>
           <select name="projects" [(ngModel)]="selectedFolder">
-            <option *ngFor="let folder of filelist" value="{{folder}}">{{folder}}</option>
+            <option *ngFor="let folder of folderlist" value="{{folder}}">{{folder}}</option>
           </select>
      </details>
     <input type="submit" value="Submit" (click) = "loadProject()">

@@ -12,7 +12,6 @@
       <option value="Alternate">Alternate</option>
       <option value="Inf">Inf</option>
       <option value="Sup">Sup</option>
-      <option value="Coincidence">Coincidence</option>
     </select>
     <select name = "to" [(ngModel)]="toInt">
       <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
