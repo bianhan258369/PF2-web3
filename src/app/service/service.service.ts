@@ -95,7 +95,7 @@ export class ServiceService {
   }
 
   ruleBasedCheck(path : string){
-    return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck&path=' + path);
+    return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck?path=' + path);
   }
 
   getFileList(folderPath : string){
@@ -103,6 +103,6 @@ export class ServiceService {
   }
 
   getAddedConstraints(path : string){
-    return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML&path=' + path);
+    return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML?path=' + path);
   }
 }

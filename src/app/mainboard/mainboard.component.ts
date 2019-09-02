@@ -389,7 +389,8 @@ export class MainboardComponent implements OnInit {
 
 	getAddedConstraints() : void{
 		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
-			console.log(data);
+			this.cookieService.set('constraints',data["constraints"]);
+			console.log(this.cookieService.get('constraints'));
 		})
 	}
 
