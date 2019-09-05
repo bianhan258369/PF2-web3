@@ -459,7 +459,7 @@ export class MainboardComponent implements OnInit {
 				attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: this.rects[index][i].text, fill: '#000000' }}
 			});
 			rectGraphList[i] = rect;
-			if(this.rects[index][i].state === 1){
+			if(this.rects[index][i].state === 2){
 				machineElement.attr(
 					{
 					label: {
