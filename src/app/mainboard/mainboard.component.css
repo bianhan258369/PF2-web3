@@ -20,25 +20,15 @@
 }
 
 
-#topbar .xmlfileinput-button {
+#topbar .fileinput-button {
 
-	padding: 4px 10px;
-    height: 20px;
-    line-height: 20px;
-    position: relative;
-    cursor: pointer;
-    color: #888;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1
+	float: left;
+	position: relative;
+	color: white;
+	width: 150px;
 }
 
-#topbar .xmlfileinput-button input{
-	
+#topbar .fileinput-button input{
 	position: absolute;
     font-size: 100px;
     right: 0;
@@ -48,73 +38,19 @@
     cursor: pointer
 }
 
-#topbar .xmlfileinput-button:hover{
+#topbar .fileinput-button:hover{
 	color: #444;
     background: #eee;
     border-color: #ccc;
     text-decoration: none
 }
 
-#topbar .owlfileinput-button {
 
-	padding: 4px 10px;
-    height: 20px;
-    line-height: 20px;
-    position: relative;
-    cursor: pointer;
-    color: #888;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1
+#topbar .topbarMenu {
+    cursor: pointer;  
 }
 
-#topbar .owlfileinput-button input{
-	
-	position: absolute;
-    font-size: 100px;
-    right: 0;
-    top: 0;
-    opacity: 0;
-    filter: alpha(opacity=0);
-    cursor: pointer
-}
-
-#topbar .owlfileinput-button:hover{
-	color: #444;
-    background: #eee;
-    border-color: #ccc;
-    text-decoration: none
-}
-
-#topbar .button {
-	padding: 4px 10px;
-    height: 30px;
-    font-size: 15px;
-    line-height: 20px;
-    position: relative;
-    cursor: pointer;
-    color: #888;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1
-}
-
-#topbar .button:hover{
-	color: #444;
-    background: #eee;
-    border-color: #ccc;
-    text-decoration: none
-}
-
-#topbar #CannotAddConstraint,#topbar #CannotXML,#topbar #CannotOWL,#topbar #CannotnextMainStep,#topbar #CannotSave,#topbar #CannotDownloadConstraints,#topbar #CannotSemanticCheck, #topbar #CannotOpenProject{
+#topbar .cannotTopbarMenu{
 	cursor: not-allowed;
 }
 
@@ -145,36 +81,12 @@
 	color: white;
 	width: 150px;
 }
-#topbar ul li a,#topbar ul li a:visited{
-    text-align: center;
-    text-decoration: none;
-	padding: 4px 10px;
-    height: 20px;
-    line-height: 20px;
-    position: relative;
-    cursor: pointer;
-    color: #888;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1	
-}
 
-#topbar #help{
-    float: left;
-	position: relative;
-	color: white;
-	width: 100px;
-}
-
-#topbar ul li a:hover{
+#topbar ul li:hover{
 	color: #444;
     background: #eee;
     border-color: #ccc;
-    text-decoration: none
+	text-decoration: none
 }
 
 #drawingboard{

@@ -64,7 +64,7 @@ export class AddconstraintComponent implements OnInit {
           //document.cookie = document.cookie + index + ':' + constraint + '/';
           //3:20,0 21,0/4:
           this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
-          console.log(document.cookie);
+          console.log(this.cookieService.get('constraints'));
           this.router.navigate(['']).then(() => {
             window.location.reload();
           });

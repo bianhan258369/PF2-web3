@@ -1,9 +1,11 @@
 <div id="loadporject">
     <form>
       <details>
-        <summary>asset</summary>
-          <select name="projects" [(ngModel)]="selectedFolder">
-            <option *ngFor="let folder of folderlist" value="{{folder}}">{{folder}}</option>
+        <summary>branches</summary>
+          <select name="projects" [(ngModel)]="selectedBranch">
+            <ng-container *ngFor="let branch of branchlist">
+                <option *ngIf="branch !== 'master'" value="{{branch}}">{{branch}}</option>
+            </ng-container>
           </select>
      </details>
     <input type="submit" value="Submit" (click) = "loadProject()">

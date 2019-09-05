@@ -129,12 +129,23 @@ export class MainboardComponent implements OnInit {
       } else {
         alert('Failure');
       }
-    };
-    for(let i = 0;i < this.uploader.queue.length;i++) this.uploader.queue[i].upload();
-    var that = this;
-    setTimeout(function(){
-      location.reload(true);
-	},1000);
+	};
+	console.log(this.uploader.queue.length);
+	for(let i = 0;i < this.uploader.queue.length;i++){
+		this.uploader.queue[i].upload();
+	} 
+	var that = this;
+	var int = setInterval(function(){
+		var finish = true;
+		for(let i = 0;i < that.uploader.queue.length;i++){
+			if(that.uploader.queue[i].progress !== 100) finish = false;
+		}
+		if(finish){
+			clearInterval(int);
+			alert("upload success");
+		}
+	},500);
+	
   }
 
   selectedOWLFileOnChanged(event:any) {
@@ -215,7 +226,6 @@ export class MainboardComponent implements OnInit {
 	showConstraintDialog() : void{
 		let index : number = this.currentDiagram - this.diagramCount;
 		if(index >= 0 && index < this.diagramCount){
-			console.log(this.projectPath);
 			this.router.navigate(['/addConstraint',index, this.projectPath]);	
 		}	
 	}
@@ -264,14 +274,14 @@ export class MainboardComponent implements OnInit {
 		});	
 	  }
 
+	  //rectState: 1 domain 2 machine
 	getRectAndPhenomenonListAndInitDCS() : void{
 		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
 				this.service.getRects(this.projectPath,i).subscribe(data => {
-					console.log("init rectColourMap");
 					this.rects[i] = data;
 					for(let j = 0;j < this.rects[i].length;j++){
-						if(this.rects[i][j].state === 0){
+						if(this.rects[i][j].state === 1){
 							if(this.rectColourMap.get(this.rects[i][j].text) === undefined){
 								let colour : string = this.colours.shift();
 								this.rectColourMap.set(this.rects[i][j].text,colour);
@@ -287,10 +297,10 @@ export class MainboardComponent implements OnInit {
 							let tempPhenomenon : Phenomenon = this.phenomena[i][j];
 							let from : Rect = tempPhenomenon.from;
 							let to : Rect = tempPhenomenon.to;
-							if(from.state === 0){
+							if(from.state === 1){
 								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
 							}
-							else if(to.state === 0){
+							else if(to.state === 1){
 								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
 							}
 						}
@@ -367,7 +377,7 @@ export class MainboardComponent implements OnInit {
 					this.service.getRects(this.projectPath,i).subscribe(data => {
 						this.rects[i] = data;
 						for(let j = 0;j < this.rects[i].length;j++){
-							if(this.rects[i][j].state === 0){
+							if(this.rects[i][j].state === 2){
 								this.diagrams[i].machineName = this.rects[i][j].text;
 								this.diagrams[i + diagramCount].machineName = this.rects[i][j].text;
 							}
@@ -392,7 +402,10 @@ export class MainboardComponent implements OnInit {
 
 	getAddedConstraints() : void{
 		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
-			this.cookieService.set('constraints',data["constraints"]);
+			if(this.cookieService.get("open") === "true"){
+				this.cookieService.set('constraints',data["constraints"]);
+				this.cookieService.set('open','false');
+			}
 		})
 	}
 
@@ -446,7 +459,7 @@ export class MainboardComponent implements OnInit {
 				attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: this.rects[index][i].text, fill: '#000000' }}
 			});
 			rectGraphList[i] = rect;
-			if(this.rects[index][i].state === 2){
+			if(this.rects[index][i].state === 1){
 				machineElement.attr(
 					{
 					label: {
@@ -629,7 +642,7 @@ export class MainboardComponent implements OnInit {
 		let textList = new Array<joint.shapes.standard.Rectangle>();
 		for(let i = 0;i < this.rects[tempIndex].length;i++){
 			let tempRect : Rect = this.rects[tempIndex][i];
-			if(tempRect.state === 0){
+			if(tempRect.state === 1){
 				let text = new joint.shapes.standard.TextBlock({
 					position:{x:0,y:i * 25 - 25},
 					size:{width:40, height:20},
@@ -769,6 +782,7 @@ export class MainboardComponent implements OnInit {
 		});
 
 		let constraints : string[] = this.cookieService.get('constraints').split('/');
+		console.log(this.cookieService.get('constraints'));
 		if(constraints.length !== 0){
 			for(let i = 0;i < constraints.length - 1;i++){
 				let index2 : number = +constraints[i].substring(0, constraints[i].indexOf(':'));
@@ -842,9 +856,11 @@ export class MainboardComponent implements OnInit {
 	getConstraints() : void{
 		this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
 			this.constraints = data;
+			if(this.constraints === null) this.constraints = new Array<string>();
 			if(this.cookieService.get('constraints').length !== 0){
 				//3:20,0 StrictPre 21,0/4:
 				let constraints : string[] = this.cookieService.get('constraints').split('/');
+				console.log(constraints[0]);
 				console.log(this.cookieService.get('constraints'));
 				for(let i = 0;i < constraints.length - 1;i++){
 					let index = constraints[i].substring(0,constraints[i].indexOf(':'));
@@ -853,6 +869,7 @@ export class MainboardComponent implements OnInit {
 					let cons : string = constraint[1];
 					let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
 					this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to);
+					console.log(this.constraints[i]);
 				}
 			}	
 		});	
@@ -870,18 +887,22 @@ export class MainboardComponent implements OnInit {
 			let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
 			let cons : string = constraint[1];
 			let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-			console.log(selectedCons);
-			console.log('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to)
 			if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to) === selectedCons){
+				console.log("delete");
 				parent.removeChild(child);
 			}
 			else{
 				newCookie = newCookie + constraints[i] + '/';
 			}
 		}
-		//console.log(newCookie);
-		//document.cookie = newCookie;
+		for(let i = 0;i < this.constraints.length;i++){
+			if(this.constraints[i] === selectedCons){
+				this.constraints.splice(i, 1);
+				break;
+			}
+		}
 		this.cookieService.set('constraints',newCookie);
+		this.saveConstraintsTxt();
 		location.reload(true);
 	}
 
@@ -915,10 +936,10 @@ export class MainboardComponent implements OnInit {
 				document.getElementById("details3DIV").hidden = false;
 			}
 			if(step === 3){
-				this.ruleBasedCheck();
+				document.getElementById("OtherConstraintDIV").hidden = false;
 			}
 			if(step === 4){
-				document.getElementById("OtherConstraintDIV").hidden = false;
+				this.ruleBasedCheck();
 			}
 		}
 		this.step = +this.cookieService.get('step');
@@ -944,7 +965,7 @@ export class MainboardComponent implements OnInit {
 			if(step === 3){
 				document.getElementById("details3DIV").hidden = true;
 			}
-			if(step === 5){
+			if(step === 4){
 				document.getElementById("OtherConstraintDIV").hidden = true;
 			}
 		}

@@ -98,8 +98,12 @@ export class ServiceService {
     return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck?path=' + path);
   }
 
-  getFileList(folderPath : string){
-    return this.httpClient.get(this.serviceUrl+'/showServerFiles?folderPath=' + folderPath);
+  getBranchList(){
+    return this.httpClient.get(this.serviceUrl+'/showBranchList');
+  }
+
+  gitChange(branch : string){
+    return this.httpClient.get(this.serviceUrl+'/gitChange?branch=' + branch);
   }
 
   getAddedConstraints(path : string){

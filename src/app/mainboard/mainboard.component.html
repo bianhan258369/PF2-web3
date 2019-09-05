@@ -2,20 +2,19 @@
   <img src="assets/icons/3.png">
   <nav>
   <ul>
-    <li *ngIf="step === 0"><button class="button" id="OpenProject" (click) = "openProject('asset/0-0-0-0-0-0-0-1')">Open</button></li>
-    <li *ngIf="step !== 0"><button class="button" id="CannotOpenProject" disabled="disabled" (click) = "openProject('asset/0-0-0-0-0-0-0-1')">Open</button></li>
     <li *ngIf="step===0" >
-      <span class="btn btn-success xmlfileinput-button">
-        <span>uploadXML</span>
-        <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)" accept="text/xml, application/xml" multiple >
+      <span class="topbarMenu btn-success fileinput-button">
+        <span>upload folder</span>
+        <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedXMLFileOnChanged($event)"  webkitdirectory mozdirectory >
       </span>
     </li>	
     <li *ngIf="step!==0" >
-      <span class="btn btn-success xmlfileinput-button" id="CannotXML">
-        <span>uploadXML</span>
+      <span class="cannotTopbarMenu btn-success fileinput-button">
+        <span>upload folder</span>
       </span>
     </li>	
-    <li *ngIf="step===0" >
+    <li class="topbarMenu" id="OpenProject" (click) = "openProject()">Open</li>
+    <!-- <li *ngIf="step===0" >
         <span class="btn btn-success owlfileinput-button">
           <span>uploadOWL</span>
           <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedOWLFileOnChanged($event)" multiple >
@@ -25,12 +24,12 @@
         <span class="btn btn-success owlfileinput-button" id="CannotOWL">
           <span>uploadOWL</span>
         </span>
-    </li>
+    </li> -->
     <!--
     <li><button class="button" id="generateDCS" (click) = "generateDomainClockSpecification()">generateDCS</button></li>
     <li><button class="button" id="generateTD" (click) = "generateTimingDiagrams()">generateTD</button></li>
     -->
-    <li *ngIf="step === 6"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
+    <!-- <li *ngIf="step === 6"><button class="button" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</button></li>
     <li *ngIf="step !== 6"><button class="button" id="CannotAddConstraint" disabled="disabled" (click) = "showConstraintDialog()">Add Constraint</button></li>
     <li *ngIf="step >= 6"><button class="button" id="Save" (click) = "saveConstraintsTxt()">Save</button></li>
     <li *ngIf="6 > step"><button class="button" id="CannotSave" (click) = "saveConstraintsTxt()" disabled="disabled">Save</button></li>
@@ -40,7 +39,18 @@
     <li *ngIf="step !== 7"><button class="button" id="CannotSemanticCheck" (click) = "downloadTool()" disabled="disabled">Semantic Check</button></li>
     <li id="help"><a routerLink="/help">Help</a></li>	
     <li *ngIf="step === 8"><button class="button" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</button></li>
-    <li *ngIf="step !== 8"><button class="button" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</button></li>	
+    <li *ngIf="step !== 8"><button class="button" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</button></li>	 -->
+    <li *ngIf="step === 6" class="topbarMenu" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</li>
+    <li *ngIf="step !== 6" class="cannotTopbarMenu" id="CannotAddConstraint" disabled="disabled">Add Constraint</li>
+    <li *ngIf="step >= 6" class="topbarMenu" id="Save" (click) = "saveConstraintsTxt()">Save</li>
+    <li *ngIf="6 > step" class="cannotTopbarMenu" id="CannotSave" (click) = "saveConstraintsTxt()" disabled="disabled">Save</li>
+    <li *ngIf="step >= 7" class="topbarMenu" id="DownloadConstraints" (click) = "downloadConstraints()">DownloadCons</li>
+    <li *ngIf="7 > step" class="cannotTopbarMenu" id="CannotDownloadConstraints" (click) = "downloadConstraints()" disabled="disabled">DownloadCons</li>
+    <li *ngIf="step === 7" class="topbarMenu" id="SemanticCheck" (click) = "downloadTool()">Semantic Check</li>
+    <li *ngIf="step !== 7" class="cannotTopbarMenu" id="CannotSemanticCheck" (click) = "downloadTool()" disabled="disabled">Semantic Check</li>
+    <li class="topbarMenu" id="help" (click) = "showHelp()"></li>	
+    <li *ngIf="step === 8" class="topbarMenu" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</li>
+    <li *ngIf="step !== 8" class="cannotTopbarMenu" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</li>	
   </ul>
   </nav>
 </div> 
@@ -112,8 +122,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>	
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -123,8 +133,8 @@
             <li style="background:#CFD8DC">&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>	
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -134,8 +144,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li style="background:#CFD8DC">&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -145,8 +155,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li style="background:#CFD8DC">&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>
+            <li>&nbsp;Step 5:Rule Based Checking</li>	
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -157,8 +167,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li style="background:#CFD8DC">&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -168,8 +178,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li style="background:#CFD8DC">&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li style="background:#CFD8DC">&nbsp;Step 5:Rule Based Checking	</li>
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -179,8 +189,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>
             <li style="background:#CFD8DC">&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -190,8 +200,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li style="background:#CFD8DC">&nbsp;Step 7:Performing Semantics Check</li>	
             <li>&nbsp;Finish</li>
@@ -201,8 +211,8 @@
             <li>&nbsp;Step 1:Read the Project File</li>
             <li>&nbsp;Step 2:generate Domain Clock Specification</li>	
             <li>&nbsp;Step 3:generate Timing Diagrams</li>	
-            <li>&nbsp;Step 4:Rule Based Checking</li>	
-            <li>&nbsp;Step 5:Read the Ontology File</li>	
+            <li>&nbsp;Step 4:Read the Ontology File</li>	
+            <li>&nbsp;Step 5:Rule Based Checking</li>	
             <li>&nbsp;Step 6:Manually Add Constraints</li>
             <li>&nbsp;Step 7:Performing Semantics Check</li>	
             <li style="background:#CFD8DC">&nbsp;Finish</li>

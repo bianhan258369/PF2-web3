@@ -12,38 +12,37 @@ import { RouterLink, Router } from '@angular/router';
   styleUrls: ['./loadproject.component.css']
 })
 export class LoadprojectComponent implements OnInit {
-  folderlist : Array<string>;
+  branchlist : Array<string>;
   
-  selectedFolder : string;
+  selectedBranch : string;
 
   constructor(private service : ServiceService,private cookieService:CookieService, private route : ActivatedRoute,private location : Location,private router : Router) { }
 
   ngOnInit() {
-    this.folderlist = new Array<string>();
-    this.getFileList('asset');
+    this.branchlist = new Array<string>();
+    this.getFileList('GitRepository');
   }
 
   getFileList(folderPath : string){
-    this.service.getFileList(folderPath).subscribe(data =>{
-      this.folderlist = data["filelist"];
-      for(let i = 0;i < this.folderlist.length;i++){
-        var folder = this.folderlist[i];
-        if(folder === 'MyCCSL.zip') this.folderlist.pop();
-      }
+    this.service.getBranchList().subscribe(data =>{
+      this.branchlist = data["branchlist"];
     });
   }
 
   loadProject(){
-    this.cookieService.deleteAll();
-    this.cookieService.set('step','1');
-    this.cookieService.set('projectPath','asset/' + this.selectedFolder);
-    this.service.getAddedConstraints(this.cookieService.get('projectPath')).subscribe(data => {
-      if(data["constraints"] !== ""){
-        this.cookieService.set('constraints',data["constraints"]);
-      }
-    });
-    this.router.navigate(['']).then(() => {
-      window.location.reload();
+    this.service.gitChange(this.selectedBranch).subscribe(data => {
+      this.cookieService.deleteAll();
+      this.cookieService.set('open','true');
+      this.cookieService.set('step','1');
+      this.cookieService.set('projectPath','GitRepository');
+      this.service.getAddedConstraints(this.cookieService.get('projectPath')).subscribe(data => {
+        if(data["constraints"] !== ""){
+          this.cookieService.set('constraints',data["constraints"]);
+        }
+      });
+      this.router.navigate(['']).then(() => {
+        window.location.reload();
+      });
     });
   }
 
