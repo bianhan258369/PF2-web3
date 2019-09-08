@@ -1,10 +1,10 @@
 <div id="loadporject">
     <form>
       <details>
-        <summary>branches</summary>
-          <select name="projects" [(ngModel)]="selectedBranch">
-            <ng-container *ngFor="let branch of branchlist">
-                <option *ngIf="branch !== 'master'" value="{{branch}}">{{branch}}</option>
+        <summary>project</summary>
+          <select name="projects" [(ngModel)]="selectedFolder">
+            <ng-container *ngFor="let folder of folderlist">
+                <option value="{{folder}}">{{folder}}</option>
             </ng-container>
           </select>
      </details>

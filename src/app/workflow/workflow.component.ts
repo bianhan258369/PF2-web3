@@ -14,7 +14,7 @@ export class WorkflowComponent implements OnInit {
   graph : joint.dia.Graph;
   mainStep : string;
 
-  constructor(private service : ServiceService,private cookieService : CookieService) {
+  constructor() {
    }
 
   ngOnInit() {

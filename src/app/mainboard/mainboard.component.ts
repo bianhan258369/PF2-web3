@@ -49,7 +49,8 @@ export class MainboardComponent implements OnInit {
 	domainClockSpecification : Array<string>;
 
   uploader:FileUploader = new FileUploader({
-    url:"http://localhost:8080/client/upload",
+	url:"http://localhost:8080/client/upload",
+	//url:"http://47.52.116.116:8090/client/upload",
     method:"POST",
 	itemAlias:"uploadedFiles"
   });
@@ -97,6 +98,7 @@ export class MainboardComponent implements OnInit {
 		this.cookieService.set('step','0');
 	}
 	if(this.cookieService.check('constraints')){
+		console.log(this.cookieService.get('constraints'));
 		this.cookieService.set('step','6');
 	}
 	this.step = +this.cookieService.get('step');
@@ -112,6 +114,7 @@ export class MainboardComponent implements OnInit {
 	if(this.step >= 5){
 		document.getElementById("OtherConstraintDIV").hidden = false;
 	}
+
 	that.interval = setInterval(function(){
 		clearInterval(that.interval);
 		that.initPaper();
@@ -119,18 +122,13 @@ export class MainboardComponent implements OnInit {
   }
 
   selectedXMLFileOnChanged(event:any) {
-    this.uploadXMLFile();
+    this.uploadXMLFile(event.target.files[0].webkitRelativePath.split('/')[0]);
   }
 
-  uploadXMLFile(){
-    this.uploader.queue[0].onSuccess = function (response, status, headers) {
-      if (status == 200) {
-        
-      } else {
-        alert('Failure');
-      }
-	};
-	console.log(this.uploader.queue.length);
+  uploadXMLFile(folderName: string){
+	this.uploader.onBuildItemForm=function(fileItem,form){
+		form.append('folderName',folderName);
+	}
 	for(let i = 0;i < this.uploader.queue.length;i++){
 		this.uploader.queue[i].upload();
 	} 
@@ -148,25 +146,6 @@ export class MainboardComponent implements OnInit {
 	
   }
 
-  selectedOWLFileOnChanged(event:any) {
-    this.uploadXMLFile();
-  }
-
-  uploadOWLFile(){
-    this.uploader.queue[0].onSuccess = function (response, status, headers) {
-      if (status == 200) {
-        
-      } else {
-        alert('Failure');
-      }
-    };
-    for(let i = 0;i < this.uploader.queue.length;i++) this.uploader.queue[i].upload();
-    var that = this;
-    setTimeout(function(){
-      location.reload(true);
-	},1000);
-  }
-
 	change_Menu(index){//index from 1 to diagramCount * 2
 		this.graph.off('change:position');
 		if(index <= this.diagramCount){
@@ -180,6 +159,7 @@ export class MainboardComponent implements OnInit {
 		element.open = false;
 		element = document.getElementById("details3");
 		element.open = false;
+		this.cookieService.set('menu',index.toString());
 	}
 	
 	open1 = false;
@@ -266,6 +246,14 @@ export class MainboardComponent implements OnInit {
 			let scale = that.paper.scale();
 			that.paper.scale(scale.sx + (delta * 0.01), scale.sy + (delta * 0.01));
 		});
+
+		let index = +this.cookieService.get('menu');
+		if(index <= this.diagramCount){
+			this.showClockDiagram(index - 1);
+		}
+		else{
+			this.showTimingDiagram(index - 1);
+		}
 	}
 
 	getDiagramCount() : void{
@@ -910,7 +898,7 @@ export class MainboardComponent implements OnInit {
 		if(!this.cookieService.check('step')){
 			this.cookieService.set('step','0');
 		} 
-		else if(+this.cookieService.get('step') > 7){
+		else if(+this.cookieService.get('step') > 8){
 			return;
 		}
 		else{
@@ -972,10 +960,10 @@ export class MainboardComponent implements OnInit {
 		this.step = +this.cookieService.get('step');
 	}
 
-	nextMainStep(){
-		this.cookieService.set('mainStep','ClockCheckFinished');
-		location.href="http://localhost:4200/workflow?from=clockcheck";
-	}
+	// nextMainStep(){
+	// 	this.cookieService.set('mainStep','ClockCheckFinished');
+	// 	location.href="http://localhost:4200/workflow?from=clockcheck";
+	// }
 
 	saveConstraintsTxt() : void{
 		var str = '';
@@ -1020,12 +1008,16 @@ export class MainboardComponent implements OnInit {
 	}
 
 	downloadConstraints(){
-		window.open('http://localhost:8080/client/downloadMyCCSLFile');
+		//window.open('http://localhost:8080/client/downloadMyCCSLFile');
+		window.open('http://47.52.116.116:8090/client/downloadMyCCSLFile');
 	}
+	
 
 	downloadTool(){
-		window.open('http://localhost:8080/client/downloadMyCCSLTool');
+		//window.open('http://localhost:8080/client/downloadMyCCSLTool');
+		window.open('http://47.52.116.116:8090/client/downloadMyCCSLTool');
 	}
+	
 
 	showDomainClockSpecification(str : string){
 		var element1 : any = document.getElementById("details1");

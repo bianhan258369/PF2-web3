@@ -19,6 +19,7 @@ const httpOptions = {
 
 export class ServiceService {
   private serviceUrl = 'http://localhost:8080/client';
+  //private serviceUrl = 'http://47.52.116.116:8090/client';
   private stepEmit = new Subject<any>();
   private mainStepEmit = new Subject<any>();
   stepEmmited$ = this.stepEmit.asObservable();
@@ -100,6 +101,10 @@ export class ServiceService {
 
   getBranchList(){
     return this.httpClient.get(this.serviceUrl+'/showBranchList');
+  }
+
+  getFileList(branch : string){
+    return this.httpClient.get(this.serviceUrl+'/showFileList?branch=' + branch);
   }
 
   gitChange(branch : string){

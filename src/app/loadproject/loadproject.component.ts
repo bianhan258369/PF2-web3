@@ -12,29 +12,31 @@ import { RouterLink, Router } from '@angular/router';
   styleUrls: ['./loadproject.component.css']
 })
 export class LoadprojectComponent implements OnInit {
-  branchlist : Array<string>;
-  
-  selectedBranch : string;
+  folderlist : Array<string>;
+  selectedFolder : string;
+  branch : string;
 
   constructor(private service : ServiceService,private cookieService:CookieService, private route : ActivatedRoute,private location : Location,private router : Router) { }
 
   ngOnInit() {
-    this.branchlist = new Array<string>();
-    this.getFileList('GitRepository');
+    this.folderlist = new Array<string>();
+    this.branch = 'test';
+    this.getFileList();
   }
 
-  getFileList(folderPath : string){
-    this.service.getBranchList().subscribe(data =>{
-      this.branchlist = data["branchlist"];
+  getFileList(){
+    this.service.getFileList('test').subscribe(data =>{
+      console.log(data);
+      this.folderlist = data["folderlist"];
     });
   }
 
   loadProject(){
-    this.service.gitChange(this.selectedBranch).subscribe(data => {
+    this.service.gitChange(this.branch).subscribe(data => {
       this.cookieService.deleteAll();
       this.cookieService.set('open','true');
       this.cookieService.set('step','1');
-      this.cookieService.set('projectPath','GitRepository');
+      this.cookieService.set('projectPath','E:/JavaProject/pf-dev/GitRepository/' + this.selectedFolder);
       this.service.getAddedConstraints(this.cookieService.get('projectPath')).subscribe(data => {
         if(data["constraints"] !== ""){
           this.cookieService.set('constraints',data["constraints"]);

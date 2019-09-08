@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes , ExtraOptions} from '@angular/router';
 import { AddconstraintComponent } from './addconstraint/addconstraint.component';
 import { ClockdiagramDetailComponent } from './clockdiagram-detail/clockdiagram-detail.component';
 import { HelpComponent } from './help/help.component';
@@ -30,11 +30,15 @@ const routes: Routes = [
   { path: 'loadproject', component: LoadprojectComponent},
 ];
 
+const config: ExtraOptions = {
+	useHash: true,
+};
+
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes,config)
   ],
   exports: [ RouterModule ]
 })
