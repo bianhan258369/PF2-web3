@@ -1,34 +1,21 @@
-<div id="loadporject">
-    <form>
-      <details>
-        <summary>project</summary>
-          <select name="projects" [(ngModel)]="selectedFolder">
-            <ng-container *ngFor="let folder of folderlist">
-                <option value="{{folder}}">{{folder}}</option>
-            </ng-container>
-          </select>
-     </details>
-    <input type="submit" value="Submit" (click) = "loadProject()">
-    <input type="submit" value="Cancel" (click) = "goBack()">
-    </form>
-        <!--
-        <details>
-          <summary (click) = "getFileList(asset)">Nested</summary>
-          <p>lolwat</p>
-          <details>
-            <summary>Nested</summary>
-            <p>lolwat</p>
-          </details>
-        </details>
-        <details>
-          <summary>Nested</summary>
-          <p>lolwat</p>
-        </details>
-        <details>
-          <summary>Nested</summary>
-          <p>lolwat</p>
-        </details>
-        <p>lolwat</p>
-      </details>
-      -->
-</div>
+<div id="loadProject" class="loadProject">  
+  <div class="table">
+   <span class="label">OpenProject:</span>
+   <button class="close" (click) = "goBack()">X</button>
+  </div> 
+  <div class="showPro">
+   <form id="op">
+    <ul *ngFor="let folder of folderlist">
+     <li [class.selected]="selectedFolder===folder" (click)="gerVersionList(folder)">{{folder}}
+      <ul *ngIf="folder === selectedFolder">
+       <li *ngFor="let version of versionlist"><label><input type="radio" name="project" id="version" value="{{version}}">{{version}}</label></li>
+      </ul>
+     </li>
+    </ul>
+   </form>
+  </div>
+    <div style="position: absolute;bottom:10px;">
+   <button class="button" (click)="loadProject()">Open</button>
+   <button class="button" (click) = "goBack()">Cancel</button>
+    </div>
+    </div>

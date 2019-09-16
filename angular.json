@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "PF2-web2": {
+    "PF2-web3": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/PF2-web2",
+            "outputPath": "dist/PF2-web3",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -66,18 +66,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "PF2-web2:build"
+            "browserTarget": "PF2-web3:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "PF2-web2:build:production"
+              "browserTarget": "PF2-web3:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "PF2-web2:build"
+            "browserTarget": "PF2-web3:build"
           }
         },
         "test": {
@@ -111,7 +111,7 @@
         }
       }
     },
-    "PF2-web2-e2e": {
+    "PF2-web3-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -120,11 +120,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "PF2-web2:serve"
+            "devServerTarget": "PF2-web3:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "PF2-web2:serve:production"
+              "devServerTarget": "PF2-web3:serve:production"
             }
           }
         },
@@ -140,5 +140,5 @@
       }
     }
   },
-  "defaultProject": "PF2-web2"
+  "defaultProject": "PF2-web3"
 }

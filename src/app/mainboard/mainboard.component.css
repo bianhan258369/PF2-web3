@@ -131,32 +131,39 @@
     overflow: hidden;
 }
 
+
 #drawingboard details{
 	position: relative;
-	min-width: 3%;
+	width: 23.7%;
 	float:left;
-	text-align:center;
+	text-align:left;
 	display: block;
 	line-height: 20px;
-	padding: 4px 10px;
+	/* padding: 4px 10px; */
+	padding: 4px;
+	/* 上右下左 */
+	margin:0% 0% 0% 0.2%;
 	list-style-type:none;
-    cursor: pointer;
-    color: black;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+	cursor: pointer;
+	/* color: black; */
+	color: white;
+	/* background: #fafafa; */
+	background: #7EC0EE;
+	border: 1px solid #ddd;
+	border-radius: 4px;
 	overflow: hidden;
 	z-index: 1;
-}
-
+   }
+#drawingboard summary{
+	text-align: center;
+   }
 #drawingboard summary:hover{
-	opacity: 0.5;      
+	opacity: 0.5; 
 	display: block;
 	cursor: pointer;
-}
-
+   }
 #drawingboard p:hover{
-	opacity: 0.5;      
+	opacity: 0.5; 
 	display: block;
 	cursor: pointer;
 }

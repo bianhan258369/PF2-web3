@@ -49,8 +49,8 @@ export class MainboardComponent implements OnInit {
 	domainClockSpecification : Array<string>;
 
   uploader:FileUploader = new FileUploader({
-	url:"http://localhost:8080/client/upload",
-	//url:"http://47.52.116.116:8090/client/upload",
+	//url:"http://localhost:8080/client/upload",
+	url:"http://47.52.116.116:8090/client/upload",
     method:"POST",
 	itemAlias:"uploadedFiles"
   });
@@ -63,8 +63,7 @@ export class MainboardComponent implements OnInit {
   ngOnInit() {
 	if(this.cookieService.check('projectPath')){
 		this.projectPath = this.cookieService.get('projectPath');
-	}
-	this.colours = new Array<string>();
+		this.colours = new Array<string>();
 	this.domainClockSpecification = new Array<string>();
 	this.rectColourMap = new Map<string, string>();
 	this.numberColourMap = new Map<number, string>();
@@ -119,6 +118,7 @@ export class MainboardComponent implements OnInit {
 		clearInterval(that.interval);
 		that.initPaper();
 	},1500);
+	}
   }
 
   selectedXMLFileOnChanged(event:any) {
@@ -960,10 +960,9 @@ export class MainboardComponent implements OnInit {
 		this.step = +this.cookieService.get('step');
 	}
 
-	// nextMainStep(){
-	// 	this.cookieService.set('mainStep','ClockCheckFinished');
-	// 	location.href="http://localhost:4200/workflow?from=clockcheck";
-	// }
+	nextMainStep(){
+		location.href="http://re4cps.org/MainPage/workflow?from=timingrequirementmodelandverification";
+	}
 
 	saveConstraintsTxt() : void{
 		var str = '';

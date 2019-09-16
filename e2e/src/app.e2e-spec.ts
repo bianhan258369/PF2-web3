@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to PF2-web2!');
+    expect(page.getTitleText()).toEqual('Welcome to PF2-web3!');
   });
 
   afterEach(async () => {

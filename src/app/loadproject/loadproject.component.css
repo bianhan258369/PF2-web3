@@ -1,9 +1,84 @@
-#loadporject{
-	background:white;
-	position: absolute;
-	top:43%;
-	left:43%;
-	width:20%;
-	height:20%;
-	float: center;
+close{
+	position: relative;
+	margin:0;
+	
+	display: inline-flex;
+	float:right;
+	margin-right: 2px;
+	right: 0;
+	padding: 8px 16px;
+	border-radius: 2px;
+	font-size: 14px;
+	cursor: pointer;
+	background-color: #F8F8F8;
+	border: none;
+   }
+   .close:hover {
+	background-color: #2D2C3B;
+	  /* opacity: 0.8; */
+	  font-weight: normal;
+   }
+   .close:disabled {
+	  /* opacity: 0.5; */
+	  cursor: auto;
+   }
+   .button{
+	position: relative;
+	margin:0;
+	
+	display: inline-flex;
+	float:center;
+	margin-right: 2px;
+	/* right: 0; */
+	left:55px;
+	padding: 8px 16px;
+	border-radius: 2px;
+	font-size: 14px;
+	cursor: pointer;
+	background-color: #F8F8F8;
+	border: none;
+   }
+   .button:hover {
+	background-color: #DCDCDC;
+	  /* opacity: 0.8; */
+	  font-weight: normal;
+   }
+   .button:disabled {
+	  /* opacity: 0.5; */
+	  cursor: auto;
+   }
+   .loadProject {
+	display: block;
+	margin: 20px;
+	background-color: #FFFFFF;
+	/* background-color: yellow; */
+	   z-index: 11;
+	   width: 250px;
+	   height: 400px;
+	   position:fixed;
+	   top:0;
+	   right:0;
+	   left:0;
+	   bottom:0;
+	margin:auto;
+   }
+   .loadProject label{
+	float:center;
+	left: 40px;
+   }
+   .showPro{
+	position: relative; 
+	/* width:100%; */
+	cursor: default;
+	overflow-x:auto;
+	overflow-y:auto;
+   }
+   ul{
+    padding: 0;
+ margin: 0;
+    list-style-type: none;
+}
+.selected {
+  background-color: #CFD8DC;
+  color: white;
 }

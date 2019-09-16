@@ -16,16 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'PF2-web2'`, () => {
+  it(`should have as title 'PF2-web3'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('PF2-web2');
+    expect(app.title).toEqual('PF2-web3');
   });
 
   it('should render title in a h1 tag', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to PF2-web2!');
+    expect(compiled.querySelector('h1').textContent).toContain('Welcome to PF2-web3!');
   });
 });

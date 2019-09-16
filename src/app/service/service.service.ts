@@ -18,8 +18,8 @@ const httpOptions = {
 })
 
 export class ServiceService {
-  private serviceUrl = 'http://localhost:8080/client';
-  //private serviceUrl = 'http://47.52.116.116:8090/client';
+  //private serviceUrl = 'http://localhost:8080/client';
+  private serviceUrl = 'http://47.52.116.116:8090/client';
   private stepEmit = new Subject<any>();
   private mainStepEmit = new Subject<any>();
   stepEmmited$ = this.stepEmit.asObservable();
@@ -99,19 +99,32 @@ export class ServiceService {
     return this.httpClient.get(this.serviceUrl+'/ruleBasedCheck?path=' + path);
   }
 
+  getAddedConstraints(path : string){
+    return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML?path=' + path);
+  }
+
+  getRootAddress(){
+    return this.httpClient.get(this.serviceUrl+'/getRootAddress');
+  }
+
   getBranchList(){
     return this.httpClient.get(this.serviceUrl+'/showBranchList');
   }
 
-  getFileList(branch : string){
-    return this.httpClient.get(this.serviceUrl+'/showFileList?branch=' + branch);
+  getFolderList(branch : string){
+    return this.httpClient.get(this.serviceUrl+'/showFolderList?branch=' + branch);
+  }
+
+  getVersionList(branch : string, folderName : string){
+    return this.httpClient.get(this.serviceUrl+'/showVersionList?branch=' + branch + '&folderName=' + folderName);
   }
 
   gitChange(branch : string){
     return this.httpClient.get(this.serviceUrl+'/gitChange?branch=' + branch);
   }
 
-  getAddedConstraints(path : string){
-    return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML?path=' + path);
+  gitRollBack(branch : string, folderName : string, version : string){
+    return this.httpClient.get(this.serviceUrl+'/gitRollBack?branch=' + branch + '&folderName=' + folderName + '&version=' + version);
   }
+  
 }
