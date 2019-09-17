@@ -39,9 +39,7 @@ export class MainboardComponent implements OnInit {
 	scenarios : Array<Array<Scenario>>;
 	phenomena : Array<Array<Phenomenon>>;
 	graph : joint.dia.Graph;
-	//graphs : Array<joint.dia.Graph>;
 	paper : joint.dia.Paper;
-	//papers : Array<joint.dia.Paper>;
 	colours : Array<string>;
 	rectColourMap : Map<string, string>;//rectName,colour
     numberColourMap : Map<number, string>;//interactionNumber,colour
@@ -49,8 +47,8 @@ export class MainboardComponent implements OnInit {
 	domainClockSpecification : Array<string>;
 
   uploader:FileUploader = new FileUploader({
-	//url:"http://localhost:8080/client/upload",
-	url:"http://47.52.116.116:8090/client/upload",
+	url:"http://localhost:8090/client/upload",
+	//url:"http://47.52.116.116:8090/client/upload",
     method:"POST",
 	itemAlias:"uploadedFiles"
   });
@@ -894,6 +892,27 @@ export class MainboardComponent implements OnInit {
 		location.reload(true);
 	}
 
+	showZ3Panel(){
+		document.getElementById('z3check').style.display = 'block';
+	}
+
+	getZ3Result(){
+		document.getElementById('z3check').style.display = 'none';
+		var timeout = +$("#timeout").val();
+		var b = +$("#bound").val();
+		var p = $("#hasPeriod").is(":checked");
+		var pb = +$("#period").val();
+		var dl = $("#hasDeadlock").is(":checked");
+		this.service.z3Check(this.projectPath, timeout, b, pb, dl, p).subscribe(data => {
+			var result = data["result"];
+			document.getElementById("z3Result").innerHTML = result;
+		});
+	}
+
+	goBack(){
+		document.getElementById('z3check').style.display = 'none';
+	}
+
 	next(){
 		if(!this.cookieService.check('step')){
 			this.cookieService.set('step','0');
@@ -991,7 +1010,7 @@ export class MainboardComponent implements OnInit {
 					str = str + 'int' + this.scenarios[i][j].from.number + ' StrictPre ' + 'int' + this.scenarios[i][j].to.number + ';,';
 				}
 				else if(this.scenarios[i][j].state ===2){
-					str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + 'int' +  this.scenarios[i][j].to.number + ';,';
+					//str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + 'int' +  this.scenarios[i][j].to.number + ';,';
 				}
 				else {
 					str = str + 'int' + this.scenarios[i][j].to.number + ' StrictPre ' + 'int' + this.scenarios[i][j].from.number + ';,';

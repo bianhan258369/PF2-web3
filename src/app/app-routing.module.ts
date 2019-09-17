@@ -6,6 +6,7 @@ import { ClockdiagramDetailComponent } from './clockdiagram-detail/clockdiagram-
 import { HelpComponent } from './help/help.component';
 import { MainboardComponent } from './mainboard/mainboard.component';
 import { LoadprojectComponent } from './loadproject/loadproject.component';
+import { Z3checkComponent } from './z3check/z3check.component';
 
 const routes: Routes = [
 

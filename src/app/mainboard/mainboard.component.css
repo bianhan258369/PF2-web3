@@ -86,7 +86,15 @@
 	color: #444;
     background: #eee;
     border-color: #ccc;
-	text-decoration: none
+	text-decoration: none;
+}
+
+#topbar #z3Result{
+	float: left;
+	position: relative;
+	color: white;
+	width: 150px;
+	font-size: large;
 }
 
 #drawingboard{
@@ -259,4 +267,16 @@
 #rightbar .DeleteButton{
     text-align: center;
     padding: 4px 10px;
+}
+
+#z3check{
+	background:white;
+	position: absolute;
+	top:43%;
+	left:43%;
+	width:20%;
+	height:20%;
+	float: center;
+	z-index: 3;
+	display: none;
 }

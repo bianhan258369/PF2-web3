@@ -18,8 +18,8 @@ const httpOptions = {
 })
 
 export class ServiceService {
-  //private serviceUrl = 'http://localhost:8080/client';
-  private serviceUrl = 'http://47.52.116.116:8090/client';
+  private serviceUrl = 'http://localhost:8090/client';
+  //private serviceUrl = 'http://47.52.116.116:8090/client';
   private stepEmit = new Subject<any>();
   private mainStepEmit = new Subject<any>();
   stepEmmited$ = this.stepEmit.asObservable();
@@ -101,6 +101,10 @@ export class ServiceService {
 
   getAddedConstraints(path : string){
     return this.httpClient.get(this.serviceUrl+'/loadConstraintsXML?path=' + path);
+  }
+
+  z3Check(path : string, timeout : number, b : number, pb : number, dl : boolean, p : boolean){
+    return this.httpClient.get(this.serviceUrl+'/z3Check?path=' + path + '&timeout=' + timeout +'&b=' + b + '&pb=' + pb + '&dl=' + dl + '&p=' + p);
   }
 
   getRootAddress(){
