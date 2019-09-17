@@ -92,7 +92,7 @@
 #topbar #z3Result{
 	float: left;
 	position: relative;
-	color: white;
+	color: red;
 	width: 150px;
 	font-size: large;
 }

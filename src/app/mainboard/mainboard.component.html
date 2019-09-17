@@ -40,7 +40,7 @@
         <details id="details2" (click) = details2Click() class="details">
           <summary>Domain Clock Specification</summary>
           <ng-container *ngFor="let str of domainClockSpecification;let i = index">
-              <p (click) = "showDomainClockSpecification(str)">SCD{{(+str.split(',')[0]) + 1}} : {{str.split(',')[1]}}</p>
+              <p (click) = "showDomainClockSpecification(str)">DCS{{(+str.split(',')[0]) + 1}} : {{str.split(',')[1]}}</p>
           </ng-container>
         </details>
       </div>

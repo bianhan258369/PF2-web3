@@ -141,7 +141,7 @@ export class ClockdiagramDetailComponent implements OnInit {
                 id:interaction.state.toString() +interaction.number.toString(),
               }
             });
-            text.position(interaction.x1 + 80, interaction.y1 - 30);
+            text.position(interaction.x1 + 60, interaction.y1 - 15);
             text.addTo(this.graph);
             break;
           }
@@ -193,7 +193,7 @@ export class ClockdiagramDetailComponent implements OnInit {
                   id:interactions[i].state.toString() +interactions[i].number.toString(),
                 }
               });
-              text.position(interactions[i].x1 + 80, interactions[i].y1 - 30);
+              text.position(interactions[i].x1 + 60, interactions[i].y1 - 15);
               text.addTo(this.graph);
               break;
             }
@@ -265,7 +265,7 @@ export class ClockdiagramDetailComponent implements OnInit {
               var id = elementView.attributes.attrs.root.id.substring(3);
               for(let n = 0;n < that.graph.getCells().length;n++){
                 if(that.graph.getCells()[n].attributes.type === 'standard.Rectangle' && that.graph.getCells()[n].attributes.attrs.root.id === id){
-                  that.graph.getCells()[n].set("position",{x: position.x + 80,y: position.y - 30});
+                  that.graph.getCells()[n].set("position",{x: position.x + 60,y: position.y - 15});
                 }
               }
             }
