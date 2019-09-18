@@ -685,7 +685,7 @@ export class MainboardComponent implements OnInit {
 							id:this.interactions[tempIndex][i].state.toString() + this.interactions[tempIndex][i].number.toString(),
 						}
 					});
-					text.position(this.interactions[tempIndex][i].x1 + 60, this.interactions[tempIndex][i].y1 - 15);
+					text.position(this.interactions[tempIndex][i].x1 + 80, this.interactions[tempIndex][i].y1 - 15);
 					text.addTo(this.graph);
 					break;
 				}
@@ -761,7 +761,7 @@ export class MainboardComponent implements OnInit {
 				var id = elementView.attributes.attrs.root.id.substring(3);
 				for(let n = 0;n < that.graph.getCells().length;n++){
 					if(that.graph.getCells()[n].attributes.type === 'standard.Rectangle' && that.graph.getCells()[n].attributes.attrs.root.id === id){
-						that.graph.getCells()[n].set("position",{x: position.x + 60,y: position.y - 15});
+						that.graph.getCells()[n].set("position",{x: position.x + 80,y: position.y - 15});
 					}
 				}
 			}
