@@ -47,9 +47,11 @@ export class AddconstraintComponent implements OnInit {
         let index = constraints[i].substring(0,constraints[i].indexOf(':'));
 					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
 					let tempCons : string = constraint[1];
-					let extra : string = "";
-          if(tempCons === 'BoundedDiff' || tempCons ==='Sup' || tempCons === 'Union' || tempCons === 'Inf') extra = constraint[3];
-          
+          if(tempCons === 'BoundedDiff' || tempCons ==='Sup' || tempCons === 'Union' || tempCons === 'Inf'){
+            let extra = constraint[3];
+            $("#from").append('<option value="'+extra+'">' + extra + '</option>');
+            $("#to").append('<option value="'+extra+'">' + extra + '</option>');
+          }    
       }
     });
   }
@@ -57,76 +59,141 @@ export class AddconstraintComponent implements OnInit {
   checkCons(){
     let index = +this.route.snapshot.paramMap.get('index'); 
     let projectPath = this.route.snapshot.paramMap.get('projectPath');
-    //let fromInt : string = 'int' + this.fromInt.substring(0, this.fromInt.indexOf(','));
-    //let toInt : string = 'int' + this.toInt.substring(0, this.toInt.indexOf(','));
 
-    console.log(this.fromInt);
-    console.log(this.toInt);
-    if(this.cons === "StrictPre" || this.cons === 'nStrictPre'){
-      this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,null,null).subscribe(data => {
-        this.canAdd = data;
-        if(!this.canAdd){
+    if(!this.fromInt.includes(',')){
+      if(this.cons === 'BoundedDiff'){
+        if(isNaN(+this.boundedFrom) || isNaN(+this.boundedTo) || +this.boundedFrom >= +this.boundedTo){
           this.location.back();
-          alert("circuit!");
-        } 
+          alert("Error Parameters");
+        }
         else{
-          let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
-          //3:20,0 StrictPre 21,0/4:5,0 BoundedDiff 6,1 [0,5]/
-          //document.cookie = document.cookie + index + ':' + constraint + '/';
-          //3:20,0 21,0/4:
-          this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
-          console.log(this.cookieService.get('constraints'));
+          let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt +' ' + this.boundedFrom + ',' + this.boundedTo + '';
+          this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
           this.router.navigate(['']).then(() => {
             window.location.reload();
           });
+        }    
+      }
+      else if(this.cons === 'Union' || this.cons === 'Inf' || this.cons === 'Sup'){
+        if(isNaN(this.addedClockName.length) || this.addedClockName.length === 0){
+          this.location.back();
+          alert("Error Parameters");
         }
-      });
-    }
-
-    else if(this.cons === 'BoundedDiff'){
-      if(isNaN(+this.boundedFrom) || isNaN(+this.boundedTo) || +this.boundedFrom >= +this.boundedTo){
-        this.location.back();
-        alert("Error Parameters");
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
+        this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
       }
       else{
-        this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
+        this.cookieService.set('newClockConstraints',this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }  
+    }
+
+    else if(!this.toInt.includes(',')){
+      if(this.cons === 'BoundedDiff'){
+        if(isNaN(+this.boundedFrom) || isNaN(+this.boundedTo) || +this.boundedFrom >= +this.boundedTo){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        else{
+          let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt +' ' + this.boundedFrom + ',' + this.boundedTo + '';
+          this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+          this.router.navigate(['']).then(() => {
+            window.location.reload();
+          });
+        }    
+      }
+      else if(this.cons === 'Union' || this.cons === 'Inf' || this.cons === 'Sup'){
+        if(isNaN(this.addedClockName.length) || this.addedClockName.length === 0){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
+        this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
+      else{
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
+        this.cookieService.set('newClockConstraints',this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
+    }
+
+    else{
+      if(this.cons === "StrictPre" || this.cons === 'nStrictPre'){
+        this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,null,null).subscribe(data => {
           this.canAdd = data;
           if(!this.canAdd){
             this.location.back();
             alert("circuit!");
           } 
           else{
-            let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt +' ' + this.boundedFrom + ',' + this.boundedTo + '';
+            let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
+            //3:20,0 StrictPre 21,0/4:5,0 BoundedDiff 6,1 [0,5]/
+            //document.cookie = document.cookie + index + ':' + constraint + '/';
+            //3:20,0 21,0/4:
             this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
+            console.log(this.cookieService.get('constraints'));
             this.router.navigate(['']).then(() => {
               window.location.reload();
             });
           }
         });
-      }    
-    }
-    else if(this.cons === 'Union' || this.cons === 'Inf' || this.cons === 'Sup'){
-      if(isNaN(this.addedClockName.length) || this.addedClockName.length === 0){
-        this.location.back();
-        alert("Error Parameters");
       }
-      let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
-      this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
-      this.router.navigate(['']).then(() => {
-        window.location.reload();
-      });
+  
+      else if(this.cons === 'BoundedDiff'){
+        if(isNaN(+this.boundedFrom) || isNaN(+this.boundedTo) || +this.boundedFrom >= +this.boundedTo){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        else{
+          this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
+            this.canAdd = data;
+            if(!this.canAdd){
+              this.location.back();
+              alert("circuit!");
+            } 
+            else{
+              let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt +' ' + this.boundedFrom + ',' + this.boundedTo + '';
+              this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
+              this.router.navigate(['']).then(() => {
+                window.location.reload();
+              });
+            }
+          });
+        }    
+      }
+      else if(this.cons === 'Union' || this.cons === 'Inf' || this.cons === 'Sup'){
+        if(isNaN(this.addedClockName.length) || this.addedClockName.length === 0){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
+        this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
+  
+      else{
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
+        //document.cookie = document.cookie + index + ':' + constraint + '/';
+        //console.log(document.cookie);
+        this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
     }
-
-    else{
-      let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
-      //document.cookie = document.cookie + index + ':' + constraint + '/';
-      //console.log(document.cookie);
-      this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
-      this.router.navigate(['']).then(() => {
-        window.location.reload();
-      });
-    }
-
   }
 
   goBack(){

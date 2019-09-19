@@ -78,7 +78,7 @@ export class MainboardComponent implements OnInit {
 	this.constraints = new Array<string>();  
 	this.allPhenomena = new Array<Phenomenon>();
 	this.references = new Array<Phenomenon>();
-	this.getConstraints();
+	//this.getConstraints();
 	this.getAllPhenomena();
 	this.getAllReferences();
 	this.initColours();
@@ -390,9 +390,68 @@ export class MainboardComponent implements OnInit {
 	getAddedConstraints() : void{
 		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
 			if(this.cookieService.get("open") === "true"){
-				this.cookieService.set('constraints',data["constraints"]);
+				let constraintsCookie = "";
+				let newClockConstraintsCookie = "";
+				let constraints = data["constraints"].split("/");
+				for(let i = 0;i < constraints.length - 1;i++){
+					let tempIndex = +constraints[i].substring(0, constraints[i].indexOf(':'));
+					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+					if(constraint[0].includes(',') && constraint[2].includes(',')){
+						let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+						let cons : string = constraint[1];
+						let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+						let extra = "";
+						if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
+						constraintsCookie = constraintsCookie + constraints[i] + '/';
+					}
+					else{
+						let from = constraint[0];
+						let cons = constraint[1];
+						let to = constraint[2];
+						if(from.includes(',')) from = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+						if(to.includes(',')) to = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+						let extra = "";
+						if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
+						newClockConstraintsCookie = newClockConstraintsCookie + constraints[i] + '/';
+					}
+				}
+				console.log(constraintsCookie);
+				console.log(newClockConstraintsCookie);
+				this.cookieService.set('constraints',constraintsCookie);
+				this.cookieService.set('newClockConstraints',newClockConstraintsCookie);
 				this.cookieService.set('open','false');
 			}
+			this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
+				this.constraints = data;
+				if(this.constraints === null) this.constraints = new Array<string>();
+				if(this.cookieService.get('constraints').length !== 0){
+					//3:20,0 StrictPre 21,0/4:
+					let constraints : string[] = this.cookieService.get('constraints').split('/');
+					for(let i = 0;i < constraints.length - 1;i++){
+						let index = constraints[i].substring(0,constraints[i].indexOf(':'));
+						let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+						let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+						let cons : string = constraint[1];
+						let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+						let extra : string = "";
+						if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
+						this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
+					}
+				}
+				if(this.cookieService.get('newClockConstraints').length !== 0){
+					let constraints : string[] = this.cookieService.get('newClockConstraints').split('/');
+					for(let i = 0;i < constraints.length - 1;i++){
+						let index = constraints[i].substring(0,constraints[i].indexOf(':'));
+						let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+						let from : string = constraint[0].includes(',') ? 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1] : constraint[0];
+						let cons : string = constraint[1];
+						let to : string = constraint[2].includes(',') ? 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1] : constraint[2];
+						let extra : string = "";
+						if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
+						this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
+					}
+				}	
+			});	
 		})
 	}
 
@@ -893,32 +952,43 @@ export class MainboardComponent implements OnInit {
 		//3:20,0 StrictPre 21,0/4:
 	}
 
-	getConstraints() : void{
-		this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
-			this.constraints = data;
-			if(this.constraints === null) this.constraints = new Array<string>();
-			if(this.cookieService.get('constraints').length !== 0){
-				//3:20,0 StrictPre 21,0/4:
-				let constraints : string[] = this.cookieService.get('constraints').split('/');
-				console.log(constraints[0]);
-				console.log(this.cookieService.get('constraints'));
-				for(let i = 0;i < constraints.length - 1;i++){
-					let index = constraints[i].substring(0,constraints[i].indexOf(':'));
-					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-					let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
-					let cons : string = constraint[1];
-					let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-					let extra : string = "";
-					if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
-					this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
-					console.log(this.constraints[i]);
-				}
-			}	
-		});	
-	  }
+	// getConstraints() : void{
+	// 	this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
+	// 		this.constraints = data;
+	// 		if(this.constraints === null) this.constraints = new Array<string>();
+	// 		if(this.cookieService.get('constraints').length !== 0){
+	// 			//3:20,0 StrictPre 21,0/4:
+	// 			let constraints : string[] = this.cookieService.get('constraints').split('/');
+	// 			for(let i = 0;i < constraints.length - 1;i++){
+	// 				let index = constraints[i].substring(0,constraints[i].indexOf(':'));
+	// 				let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+	// 				let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+	// 				let cons : string = constraint[1];
+	// 				let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+	// 				let extra : string = "";
+	// 				if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
+	// 				this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
+	// 			}
+	// 		}
+	// 		if(this.cookieService.get('newClockConstraints').length !== 0){
+	// 			let constraints : string[] = this.cookieService.get('newClockConstraints').split('/');
+	// 			for(let i = 0;i < constraints.length - 1;i++){
+	// 				let index = constraints[i].substring(0,constraints[i].indexOf(':'));
+	// 				let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+	// 				let from : string = constraint[0].includes(',') ? 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1] : constraint[0];
+	// 				let cons : string = constraint[1];
+	// 				let to : string = constraint[2].includes(',') ? 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1] : constraint[2];
+	// 				let extra : string = "";
+	// 				if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
+	// 				this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
+	// 			}
+	// 		}	
+	// 	});	
+	//   }
 
 	  deleteConstraint(index : number) : void{
-		let newCookie : string = "";
+		let constraintCookie : string = "";
+		let newClockConstraintsCookie : string = "";
 		let parent = document.getElementById('OtherConstraint');
 		let child = document.getElementById('consAndBut' + index);
 		let selectedCons = document.getElementById('cons' + index).innerText;
@@ -926,17 +996,33 @@ export class MainboardComponent implements OnInit {
 		for(let i = 0;i < constraints.length - 1;i++){
 			let tempIndex = +constraints[i].substring(0, constraints[i].indexOf(':'));
 			let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-			let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
-			let cons : string = constraint[1];
-			let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-			let extra = "";
-			if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
-			if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
-				console.log("delete");
-				parent.removeChild(child);
+			if(constraint[0].includes(',') && constraint[2].includes(',')){
+				let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+				let cons : string = constraint[1];
+				let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+				let extra = "";
+				if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
+				if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
+					parent.removeChild(child);
+				}
+				else{
+					constraintCookie = constraintCookie + constraints[i] + '/';
+				}
 			}
 			else{
-				newCookie = newCookie + constraints[i] + '/';
+				let from = constraint[0];
+				let cons = constraint[1];
+				let to = constraint[2];
+				if(from.includes(',')) from = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+				if(to.includes(',')) to = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+				let extra = "";
+				if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
+				if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
+					parent.removeChild(child);
+				}
+				else{
+					newClockConstraintsCookie = newClockConstraintsCookie + newClockConstraintsCookie[i] + '/';
+				}
 			}
 		}
 		for(let i = 0;i < this.constraints.length;i++){
@@ -945,7 +1031,8 @@ export class MainboardComponent implements OnInit {
 				break;
 			}
 		}
-		this.cookieService.set('constraints',newCookie);
+		this.cookieService.set('constraints',constraintCookie);
+		this.cookieService.set('newClockConstraints',newClockConstraintsCookie);
 		this.saveConstraintsTxt();
 		location.reload(true);
 	}
@@ -1047,11 +1134,23 @@ export class MainboardComponent implements OnInit {
 		var addedConstraints = '';
 		var ints = new Array<number>();
 		console.log(this.constraints);
+		// var newClockConstraints = this.cookieService.get('newClockConstraints').split('/');
+		// for(let i = 0;i < newClockConstraints.length - 1;i++){
+		// 	var tempStr = newClockConstraints[i].substr(newClockConstraints[i].indexOf(':')+1).split(' ');
+		// 	console.log(tempStr);
+		// 	var from = tempStr[0];
+		// 	var to = tempStr[2];
+		// 	if(!from.includes(',') && !str.includes(from)) str = str + from + '/';
+		// 	if(!to.includes(',') && !str.includes(to)) str = str + to + '/';
+		// }
 		for(let i = 0;i < this.constraints.length;i++){
+			console.log(this.constraints);
 			var tempStr = this.constraints[i].substr(this.constraints[i].indexOf(':')+1).split(' ');
 			var from = tempStr[0];
 			var to = tempStr[2];
+			if((!from.includes('int') || !from.includes('state')) && !str.includes(from)) str = str + from + '/';
 			if(from.includes('.') && !str.includes(from)) str = str + from + '/';
+			if((!to.includes('int') || !to.includes('state')) && !str.includes(to)) str = str + to + '/';
 			if(to.includes('.') && !str.includes(to)) str = str + to + '/';
 		}
 		for(let i = 0;i < this.diagramCount;i++){
@@ -1081,19 +1180,24 @@ export class MainboardComponent implements OnInit {
 			str = str + this.constraints[i] + ';/';
 			addedConstraints = addedConstraints + this.constraints[i] + '//';
 		}
+		// for(let i = 0;i < newClockConstraints.length - 1;i++){
+		// 	str = str + newClockConstraints[i] + ';/';
+		// 	addedConstraints = addedConstraints + newClockConstraints[i] + '//';
+		// }
+		console.log(str);
 		this.service.exportConstraints(this.projectPath,str,addedConstraints);
 		alert('success');
 	}
 
 	downloadConstraints(){
-		//window.open('http://localhost:8080/client/downloadMyCCSLFile');
-		window.open('http://47.52.116.116:8090/client/downloadMyCCSLFile');
+		window.open('http://localhost:8090/client/downloadMyCCSLFile?path=' + this.projectPath);
+		//window.open('http://47.52.116.116:8090/client/downloadMyCCSLFile');
 	}
 	
 
 	downloadTool(){
-		//window.open('http://localhost:8080/client/downloadMyCCSLTool');
-		window.open('http://47.52.116.116:8090/client/downloadMyCCSLTool');
+		window.open('http://localhost:8090/client/downloadMyCCSLTool');
+		//window.open('http://47.52.116.116:8090/client/downloadMyCCSLTool');
 	}
 	
 

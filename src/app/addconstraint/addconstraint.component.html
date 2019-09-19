@@ -1,6 +1,6 @@
 <div id = "addConstraint">
   <form>
-    <select name = "from" [(ngModel)]="fromInt">
+    <select id="from" name = "from" [(ngModel)]="fromInt">
       <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
     </select>
     <select name = "cons" [(ngModel)]="cons">
@@ -13,7 +13,7 @@
       <option value="Inf">Inf</option>
       <option value="Sup">Sup</option>
     </select>
-    <select name = "to" [(ngModel)]="toInt">
+    <select id="to" name = "to" [(ngModel)]="toInt">
       <option *ngFor="let interaction of interactions" value="{{interaction.number}},{{interaction.state}}">int{{interaction.number}},state:{{interaction.state}}</option>
     </select>
     <br>
