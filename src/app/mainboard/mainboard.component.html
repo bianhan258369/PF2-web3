@@ -20,7 +20,7 @@
     <li class="topbarMenu" id="help"></li>	
     <li *ngIf="step === 9" class="topbarMenu" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</li>
     <li *ngIf="step !== 9" class="cannotTopbarMenu" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</li>
-    <div *ngIf="step >= 8" id="z3Result">waiting......</div>	
+    <!-- <div *ngIf="step >= 8" id="z3Result">waiting......</div>	 -->
   </ul>
   </nav>
 </div> 

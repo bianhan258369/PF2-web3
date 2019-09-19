@@ -246,6 +246,7 @@ export class MainboardComponent implements OnInit {
 		});
 
 		let index = +this.cookieService.get('menu');
+		this.currentDiagram = index - 1;
 		if(index <= this.diagramCount){
 			this.showClockDiagram(index - 1);
 		}
@@ -808,6 +809,59 @@ export class MainboardComponent implements OnInit {
 						link.attr({
 							line: {
 								strokeWidth: 1,
+								sourceMarker:{
+									'fill': 'none',
+									'stroke': 'none',
+								},
+								targetMarker:{
+									'fill': 'none',
+									'stroke': 'none',
+								}
+							},	
+						});
+						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}
+					else if(cons === 'BoundedDiff'){
+						let fromto = constraint[3];
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);
+						link.appendLabel({
+							attrs: {
+								text: {
+									text: "Bounded[" + fromto + "]",
+								},
+								body: {
+									stroke: 'transparent',
+									fill: 'transparent'
+								}
+							}
+						});
+						this.graph.addCells([ellipseGraphList[interactionFromIndex],ellipseGraphList[interactionToIndex],link]);
+					}
+					else if(cons === 'Union' || cons === 'Inf' || cons === 'Sup'){
+						let name = constraint[3];
+						let link = new joint.shapes.standard.Link();
+						link.source(ellipseGraphList[interactionFromIndex]);
+						link.target(ellipseGraphList[interactionToIndex]);
+						link.appendLabel({
+							attrs: {
+								text: {
+									text: cons +"[" + name + "]",
+								},
+								body: {
+									stroke: 'transparent',
+									fill: 'transparent'
+								}
+							}
+						});
+						link.attr({
+							line: {
+								strokeWidth: 1,
+								sourceMarker:{
+									'fill': 'none',
+									'stroke': 'none',
+								},
 								targetMarker:{
 									'fill': 'none',
 									'stroke': 'none',
@@ -854,7 +908,9 @@ export class MainboardComponent implements OnInit {
 					let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
 					let cons : string = constraint[1];
 					let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-					this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to);
+					let extra : string = "";
+					if(cons === 'BoundedDiff' || cons ==='Sup' || cons === 'Union' || cons === 'Inf') extra = constraint[3];
+					this.constraints.push('TD' + (+index + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra);
 					console.log(this.constraints[i]);
 				}
 			}	
@@ -873,7 +929,9 @@ export class MainboardComponent implements OnInit {
 			let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
 			let cons : string = constraint[1];
 			let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-			if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to) === selectedCons){
+			let extra = "";
+			if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff') extra = constraint[3];
+			if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
 				console.log("delete");
 				parent.removeChild(child);
 			}
@@ -905,7 +963,8 @@ export class MainboardComponent implements OnInit {
 		var dl = $("#hasDeadlock").is(":checked");
 		this.service.z3Check(this.projectPath, timeout, b, pb, dl, p).subscribe(data => {
 			var result = data["result"];
-			document.getElementById("z3Result").innerHTML = "result:"+result;
+			//document.getElementById("z3Result").innerHTML = "result:"+result;
+			alert("z3 result:"+result);
 		});
 	}
 
@@ -987,12 +1046,13 @@ export class MainboardComponent implements OnInit {
 		var str = '';
 		var addedConstraints = '';
 		var ints = new Array<number>();
+		console.log(this.constraints);
 		for(let i = 0;i < this.constraints.length;i++){
 			var tempStr = this.constraints[i].substr(this.constraints[i].indexOf(':')+1).split(' ');
 			var from = tempStr[0];
 			var to = tempStr[2];
-			if(from.includes('.') && !str.includes(from)) str = str + from + ',';
-			if(to.includes('.') && !str.includes(to)) str = str + to + ',';
+			if(from.includes('.') && !str.includes(from)) str = str + from + '/';
+			if(to.includes('.') && !str.includes(to)) str = str + to + '/';
 		}
 		for(let i = 0;i < this.diagramCount;i++){
 			for(let j = 0;j < this.interactions[i].length;j++){
@@ -1000,26 +1060,26 @@ export class MainboardComponent implements OnInit {
 			}
 		}
 		for(let i = 0;i < ints.length;i++){
-			if(i!==ints.length - 1) str = str + 'int' + ints[i] + ',';
-			else str = str + 'int' + ints[i] + ';,';
+			if(i!==ints.length - 1) str = str + 'int' + ints[i] + '/';
+			else str = str + 'int' + ints[i] + ';/';
 		} 
-		str = str + ',';
+		str = str + '/';
 		for(let i = 0;i < this.diagramCount;i++){
 			for(let j = 0;j < this.scenarios[i].length;j++){
 				if(this.scenarios[i][j].state !==2 && this.scenarios[i][j].state !== 4){
-					str = str + 'int' + this.scenarios[i][j].from.number + ' StrictPre ' + 'int' + this.scenarios[i][j].to.number + ';,';
+					str = str + 'int' + this.scenarios[i][j].from.number + ' StrictPre ' + 'int' + this.scenarios[i][j].to.number + ';/';
 				}
 				else if(this.scenarios[i][j].state ===2){
 					//str = str + 'int' + this.scenarios[i][j].from.number + ' Coincidence ' + 'int' +  this.scenarios[i][j].to.number + ';,';
 				}
 				else {
-					str = str + 'int' + this.scenarios[i][j].to.number + ' StrictPre ' + 'int' + this.scenarios[i][j].from.number + ';,';
+					str = str + 'int' + this.scenarios[i][j].to.number + ' StrictPre ' + 'int' + this.scenarios[i][j].from.number + ';/';
 				}
 			}
 		}
 		for(let i = 0;i < this.constraints.length;i++){
-			str = str + this.constraints[i] + ';,';
-			addedConstraints = addedConstraints + this.constraints[i] + ',';
+			str = str + this.constraints[i] + ';/';
+			addedConstraints = addedConstraints + this.constraints[i] + '//';
 		}
 		this.service.exportConstraints(this.projectPath,str,addedConstraints);
 		alert('success');
