@@ -68,8 +68,10 @@ export class LoadprojectComponent implements OnInit {
         this.cookieService.set('step','1');
         this.cookieService.set('projectPath',this.rootAddress + this.selectedFolder);
         this.service.getAddedConstraints(this.cookieService.get('projectPath')).subscribe(data => {
-          if(data["constraints"] !== ""){
+          if(data["constraints"] !== "NotExist"){
+            console.log(data["constraints"]);
             this.cookieService.set('constraints',data["constraints"]);
+            this.cookieService.set('step','6');
           }
         });
         this.router.navigate(['']).then(() => {

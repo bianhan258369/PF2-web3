@@ -24,6 +24,7 @@ export class AddconstraintComponent implements OnInit {
   boundedFrom : string;
   boundedTo : string;
   addedClockName : string;
+  addedTime : string;
 
   constructor(private service : ServiceService, private route: ActivatedRoute, private router : Router, private location : Location, private cookieService:CookieService) { }
 
@@ -85,6 +86,18 @@ export class AddconstraintComponent implements OnInit {
           window.location.reload();
         });
       }
+      else if(this.cons === 'Delay'){
+        if(isNaN(+this.addedTime)){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        console.log(this.addedTime);
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedTime;
+        this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
       else{
         let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt;
         this.cookieService.set('newClockConstraints',this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
@@ -114,6 +127,18 @@ export class AddconstraintComponent implements OnInit {
           alert("Error Parameters");
         }
         let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
+        this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
+      else if(this.cons === 'Delay'){
+        if(isNaN(+this.addedTime)){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        console.log(this.addedTime);
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedTime;
         this.cookieService.set('newClockConstraints', this.cookieService.get('newClockConstraints') + index + ':'  + constraint + '/');
         this.router.navigate(['']).then(() => {
           window.location.reload();
@@ -178,6 +203,18 @@ export class AddconstraintComponent implements OnInit {
           alert("Error Parameters");
         }
         let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedClockName;
+        this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
+        this.router.navigate(['']).then(() => {
+          window.location.reload();
+        });
+      }
+      else if(this.cons === 'Delay'){
+        if(isNaN(+this.addedTime)){
+          this.location.back();
+          alert("Error Parameters");
+        }
+        console.log(this.addedTime);
+        let constraint : string = this.fromInt + ' ' + this.cons + ' ' + this.toInt + ' ' + this.addedTime;
         this.cookieService.set('constraints', this.cookieService.get('constraints') + index + ':'  + constraint + '/');
         this.router.navigate(['']).then(() => {
           window.location.reload();
