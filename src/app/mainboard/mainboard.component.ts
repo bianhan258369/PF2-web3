@@ -47,8 +47,8 @@ export class MainboardComponent implements OnInit {
 	domainClockSpecification : Array<string>;
 
   uploader:FileUploader = new FileUploader({
-	url:"http://localhost:8090/client/upload",
-	//url:"http://47.52.116.116:8090/client/upload",
+	//url:"http://localhost:8090/client/upload",
+	url:"http://47.52.116.116:8090/client/upload",
     method:"POST",
 	itemAlias:"uploadedFiles"
   });
@@ -79,6 +79,7 @@ export class MainboardComponent implements OnInit {
 	this.allPhenomena = new Array<Phenomenon>();
 	this.references = new Array<Phenomenon>();
 	//this.getConstraints();
+	console.log(this.cookieService.get('branch'));
 	this.getAddedConstraints();
 	this.getAllPhenomena();
 	this.getAllReferences();
@@ -186,9 +187,9 @@ export class MainboardComponent implements OnInit {
 		this.colours[0] = '#EA0000';
 		this.colours[1] = '#6F00D2';
 		this.colours[2] = '#000093';
-		this.colours[3] = '#4DFFFF';
-		this.colours[4] = '#BBFFBB';
-		this.colours[5] = '#F9F900';
+		this.colours[3] = '#28004D';
+		this.colours[4] = '#003E3E';
+		this.colours[5] = '#600030';
 		this.colours[6] = '#FF8F59';
 		this.colours[7] = '#AD5A5A';
 		this.colours[8] = '#B9B973';
@@ -202,9 +203,12 @@ export class MainboardComponent implements OnInit {
 
 	showConstraintDialog() : void{
 		let index : number = this.currentDiagram - this.diagramCount;
-		if(index >= 0 && index < this.diagramCount){
-			this.router.navigate(['/addConstraint',index, this.projectPath]);	
-		}	
+		this.service.gitCheckout(this.cookieService.get('branch')).subscribe(data => {
+			console.log(this.cookieService.get('branch'));
+			if(index >= 0 && index < this.diagramCount){
+				this.router.navigate(['/addConstraint',index, this.projectPath]);	
+			}
+		})
 	}
 
 	initPaper() : void{
@@ -255,68 +259,52 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getDiagramCount() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(data=>{
+		this.service.getDiagramCount().subscribe(data=>{
 			this.diagramCount = data;
 		});	
 	  }
 
 	  //rectState: 1 domain 2 machine
 	getRectAndPhenomenonListAndInitDCS() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getRects(this.projectPath,i).subscribe(data => {
+				this.service.getRects(i).subscribe(data => {
 					this.rects[i] = data;
 					for(let j = 0;j < this.rects[i].length;j++){
 						if(this.rects[i][j].state === 1){
-							if(this.rectColourMap.get(this.rects[i][j].text) === undefined){
+							if(this.rectColourMap.get(this.rects[i][j].text.replace("&#x000A",'\n')) === undefined){
 								let colour : string = this.colours.shift();
-								this.rectColourMap.set(this.rects[i][j].text,colour);
+								this.rectColourMap.set(this.rects[i][j].text.replace("&#x000A",'\n'),colour);
 								this.colours.push(colour);
 							}
-							this.domainClockSpecification[this.domainClockSpecification.length] = i + ',' + this.rects[i][j].text + ',' + this.rectColourMap.get(this.rects[i][j].text);
+							this.domainClockSpecification[this.domainClockSpecification.length] = i + ',' + this.rects[i][j].text.replace("&#x000A",'\n') + ',' + this.rectColourMap.get(this.rects[i][j].text.replace("&#x000A",'\n'));
 						}						
 					}
-					this.service.getPhenomenonList(this.projectPath,i).subscribe(phe => {
+					this.service.getPhenomenonList(i).subscribe(phe => {
 						console.log("init numberColourMap");
+						console.log(this.rectColourMap)
 						this.phenomena[i] = phe;
 						for(let j = 0;j < this.phenomena[i].length;j++){
 							let tempPhenomenon : Phenomenon = this.phenomena[i][j];
 							let from : Rect = tempPhenomenon.from;
 							let to : Rect = tempPhenomenon.to;
 							if(from.state === 1){
-								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
+								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text.replace("&#x000A",'\n')));
 							}
 							else if(to.state === 1){
-								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
+								this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text.replace("&#x000A",'\n')));
 							}
 						}
 					})
 				});
 			}
-			// for(let i = 0;i < diagramCount;i++){
-			// 	this.service.getPhenomenonList(i).subscribe(phe => {
-			// 		console.log("init numberColourMap");
-			// 		this.phenomena[i] = phe;
-			// 		for(let j = 0;j < this.phenomena[i].length;j++){
-			// 			let tempPhenomenon : Phenomenon = this.phenomena[i][j];
-			// 			let from : Rect = tempPhenomenon.from;
-			// 			let to : Rect = tempPhenomenon.to;
-			// 			if(from.state === 0){
-			// 				this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(from.text));
-			// 			}
-			// 			else if(to.state === 0){
-			// 				this.numberColourMap.set(tempPhenomenon.biaohao, this.rectColourMap.get(to.text));
-			// 			}
-			// 		}
-			// 	})
-			// }
 		});	
 	}
 
 	getOvalList() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getOvals(this.projectPath,i).subscribe(data => {
+				this.service.getOvals(i).subscribe(data => {
 					this.ovals[i] = data;
 				})
 			}
@@ -324,9 +312,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getLineList() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getLines(this.projectPath,i).subscribe(data => {
+				this.service.getLines(i).subscribe(data => {
 					this.lines[i] = data;
 				})
 			}
@@ -334,9 +322,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getScenarioList() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getScenarios(this.projectPath,i).subscribe(data => {
+				this.service.getScenarios(i).subscribe(data => {
 					this.scenarios[i] = data;
 				})
 			}
@@ -344,9 +332,9 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getInteractionList() : void{
-		this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+		this.service.getDiagramCount().subscribe(diagramCount=>{
 			for(let i = 0;i < diagramCount;i++){
-				this.service.getInteractions(this.projectPath,i).subscribe(data => {
+				this.service.getInteractions(i).subscribe(data => {
 					this.interactions[i] = data;
 				})
 			}
@@ -354,18 +342,18 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getDiagramList() : void{
-		this.service.getDiagrams(this.projectPath).subscribe(dia=>{
+		this.service.getDiagrams().subscribe(dia=>{
 			this.diagrams = dia;
-			this.service.getDiagramCount(this.projectPath).subscribe(diagramCount=>{
+			this.service.getDiagramCount().subscribe(diagramCount=>{
 				for(let i = 0;i < diagramCount;i++){
 					this.diagrams[i].title = 'SCD' + (i + 1);
 					this.diagrams[i + diagramCount].title = 'TD' + (i + 1);
-					this.service.getRects(this.projectPath,i).subscribe(data => {
+					this.service.getRects(i).subscribe(data => {
 						this.rects[i] = data;
 						for(let j = 0;j < this.rects[i].length;j++){
 							if(this.rects[i][j].state === 2){
-								this.diagrams[i].machineName = this.rects[i][j].text;
-								this.diagrams[i + diagramCount].machineName = this.rects[i][j].text;
+								this.diagrams[i].machineName = this.rects[i][j].text.replace("&#x000A",'\n');
+								this.diagrams[i + diagramCount].machineName = this.rects[i][j].text.replace("&#x000A",'\n');
 							}
 						}
 					})
@@ -375,19 +363,19 @@ export class MainboardComponent implements OnInit {
 	}
 
 	getAllPhenomena() : void{
-		this.service.getAllPhenomenonList(this.projectPath).subscribe(data => {
+		this.service.getAllPhenomenonList().subscribe(data => {
 			this.allPhenomena = data;
 		})
 	}
 
 	getAllReferences() : void{
-		this.service.getAllReferenceList(this.projectPath).subscribe(data => {
+		this.service.getAllReferenceList().subscribe(data => {
 			this.references = data;
 		})
 	}
 
 	getAddedConstraints() : void{
-		this.service.getAddedConstraints(this.projectPath).subscribe(data =>{
+		this.service.getAddedConstraints().subscribe(data =>{
 			if(data["constraints"] !== 'NotExist'){
 				if(this.cookieService.get("open") === "true"){
 					let constraintsCookie = "";
@@ -421,7 +409,7 @@ export class MainboardComponent implements OnInit {
 					this.cookieService.set('newClockConstraints',newClockConstraintsCookie);
 					this.cookieService.set('open','false');
 				}
-				this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
+				this.service.getOWLConstrainList().subscribe(data=>{
 					this.constraints = data;
 					if(this.constraints === null) this.constraints = new Array<string>();
 					if(this.cookieService.get('constraints').length !== 0){
@@ -455,7 +443,7 @@ export class MainboardComponent implements OnInit {
 				});
 			}
 			else{
-				this.service.getOWLConstrainList(this.projectPath).subscribe(data=>{
+				this.service.getOWLConstrainList().subscribe(data=>{
 					this.constraints = data;
 					if(this.constraints === null) this.constraints = new Array<string>();
 					if(this.cookieService.get('constraints').length !== 0){
@@ -538,14 +526,14 @@ export class MainboardComponent implements OnInit {
 			let rect = new joint.shapes.standard.Rectangle({
 				position: {x: this.rects[index][i].x1,y : this.rects[index][i].y1},
 				size: {width: this.rects[index][i].x2+150,height: this.rects[index][i].y2},
-				attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: this.rects[index][i].text, fill: '#000000' }}
+				attrs: { body: { stroke:'#000000', fill: 'none',strokeWidth:1 }, label: { text: this.rects[index][i].text.replace("&#x000A",'\n'), fill: '#000000' }}
 			});
 			rectGraphList[i] = rect;
 			if(this.rects[index][i].state === 2){
 				machineElement.attr(
 					{
 					label: {
-						text: this.rects[index][i].text + '(' + this.rects[index][i].shortName + ')',
+						text: this.rects[index][i].text.replace("&#x000A",'\n') + '(' + this.rects[index][i].shortName + ')',
 						x: this.rects[index][i].x1,
 						y: this.rects[index][i].y1,
 					},
@@ -597,7 +585,7 @@ export class MainboardComponent implements OnInit {
 				let rectToIndex = -1;
 				for(let j = 0;j < this.rects[index].length;j++){
 					let tempRect : Rect = this.rects[index][j];
-					if(tempRect.text === rectTo.text) rectToIndex = j;
+					if(tempRect.text.replace("&#x000A",'\n') === rectTo.text.replace("&#x000A",'\n')) rectToIndex = j;
 				}
 				let link = new joint.shapes.standard.Link({
 					source: { id: machineElement.id },
@@ -633,7 +621,7 @@ export class MainboardComponent implements OnInit {
 				let ovalIndex = -1;
 				for(let j = 0;j < this.rects[index].length;j++){
 					let tempRect : Rect = this.rects[index][j];
-					if(tempRect.text === rect.text) rectIndex = j;
+					if(tempRect.text.replace("&#x000A",'\n') === rect.text.replace("&#x000A",'\n')) rectIndex = j;
 				}
 				for(let j = 0;j < this.ovals[index].length;j++){
 					let tempOval : Oval = this.ovals[index][j];
@@ -674,7 +662,7 @@ export class MainboardComponent implements OnInit {
 				let ovalIndex = -1;
 				for(let j = 0;j < this.rects[index].length;j++){
 					let tempRect : Rect = this.rects[index][j];
-					if(tempRect.text === rect.text) rectIndex = j;
+					if(tempRect.text.replace("&#x000A",'\n') === rect.text.replace("&#x000A",'\n')) rectIndex = j;
 				}
 				for(let j = 0;j < this.ovals[index].length;j++){
 					let tempOval : Oval = this.ovals[index][j];
@@ -733,7 +721,7 @@ export class MainboardComponent implements OnInit {
 				let tag = new joint.shapes.basic.Rect({
 					position:{x:40,y:i * 25 - 25},
 					size:{width:40, height:20},
-					attrs:{rect : {fill: this.rectColourMap.get(tempRect.text)}}
+					attrs:{rect : {fill: this.rectColourMap.get(tempRect.text.replace("&#x000A",'\n'))}}
 				});
 				this.graph.addCell(text);
 				this.graph.addCell(tag);
@@ -989,54 +977,57 @@ export class MainboardComponent implements OnInit {
 	}
 
 	  deleteConstraint(index : number) : void{
-		let constraintCookie : string = "";
-		let newClockConstraintsCookie : string = "";
-		let parent = document.getElementById('OtherConstraint');
-		let child = document.getElementById('consAndBut' + index);
-		let selectedCons = document.getElementById('cons' + index).innerText;
-		let constraints : string[] = this.cookieService.get('constraints').split('/');
-		for(let i = 0;i < constraints.length - 1;i++){
-			let tempIndex = +constraints[i].substring(0, constraints[i].indexOf(':'));
-			let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
-			if(constraint[0].includes(',') && constraint[2].includes(',')){
-				let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
-				let cons : string = constraint[1];
-				let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-				let extra = "";
-				if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff' || cons === 'Delay') extra = constraint[3];
-				if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
-					parent.removeChild(child);
+		this.service.gitCheckout(this.cookieService.get('branch')).subscribe(data => {
+			console.log(this.cookieService.get('branch'));
+			let constraintCookie : string = "";
+			let newClockConstraintsCookie : string = "";
+			let parent = document.getElementById('OtherConstraint');
+			let child = document.getElementById('consAndBut' + index);
+			let selectedCons = document.getElementById('cons' + index).innerText;
+			let constraints : string[] = this.cookieService.get('constraints').split('/');
+			for(let i = 0;i < constraints.length - 1;i++){
+				let tempIndex = +constraints[i].substring(0, constraints[i].indexOf(':'));
+				let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
+				if(constraint[0].includes(',') && constraint[2].includes(',')){
+					let from : string = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+					let cons : string = constraint[1];
+					let to : string = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+					let extra = "";
+					if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff' || cons === 'Delay') extra = constraint[3];
+					if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
+						parent.removeChild(child);
+					}
+					else{
+						constraintCookie = constraintCookie + constraints[i] + '/';
+					}
 				}
 				else{
-					constraintCookie = constraintCookie + constraints[i] + '/';
+					let from = constraint[0];
+					let cons = constraint[1];
+					let to = constraint[2];
+					if(from.includes(',')) from = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
+					if(to.includes(',')) to = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
+					let extra = "";
+					if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff' || cons === 'Delay') extra = constraint[3];
+					if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
+						parent.removeChild(child);
+					}
+					else{
+						newClockConstraintsCookie = newClockConstraintsCookie + newClockConstraintsCookie[i] + '/';
+					}
 				}
 			}
-			else{
-				let from = constraint[0];
-				let cons = constraint[1];
-				let to = constraint[2];
-				if(from.includes(',')) from = 'int' + constraint[0].split(',')[0] + 'state' + constraint[0].split(',')[1];
-				if(to.includes(',')) to = 'int' + constraint[2].split(',')[0] + 'state' + constraint[2].split(',')[1];
-				let extra = "";
-				if(cons === 'Union' || cons === 'Sup' || cons === 'Inf' || cons === 'BoundedDiff' || cons === 'Delay') extra = constraint[3];
-				if(('TD' + (tempIndex + 1) + ':' + from + ' ' + cons + ' ' + to + ' ' + extra) === selectedCons){
-					parent.removeChild(child);
-				}
-				else{
-					newClockConstraintsCookie = newClockConstraintsCookie + newClockConstraintsCookie[i] + '/';
+			for(let i = 0;i < this.constraints.length;i++){
+				if(this.constraints[i] === selectedCons){
+					this.constraints.splice(i, 1);
+					break;
 				}
 			}
-		}
-		for(let i = 0;i < this.constraints.length;i++){
-			if(this.constraints[i] === selectedCons){
-				this.constraints.splice(i, 1);
-				break;
-			}
-		}
-		this.cookieService.set('constraints',constraintCookie);
-		this.cookieService.set('newClockConstraints',newClockConstraintsCookie);
-		this.saveConstraintsTxt();
-		location.reload(true);
+			this.cookieService.set('constraints',constraintCookie);
+			this.cookieService.set('newClockConstraints',newClockConstraintsCookie);
+			this.saveConstraintsTxt();
+			location.reload(true);
+		})
 	}
 
 	showZ3Panel(){
@@ -1050,7 +1041,7 @@ export class MainboardComponent implements OnInit {
 		var p = $("#hasPeriod").is(":checked");
 		var pb = +$("#period").val();
 		var dl = $("#hasDeadlock").is(":checked");
-		this.service.z3Check(this.projectPath, timeout, b, pb, dl, p).subscribe(data => {
+		this.service.z3Check(timeout, b, pb, dl, p).subscribe(data => {
 			var result = data["result"];
 			//document.getElementById("z3Result").innerHTML = "result:"+result;
 			alert("z3 result:"+result);
@@ -1081,7 +1072,7 @@ export class MainboardComponent implements OnInit {
 					var currentElement = elementView.model;//currentElement:the element which you double click on
 					let index : number = that.currentDiagram;
 					let domainText : string = currentElement.attr().label.text;
-					let colour : string = that.rectColourMap.get(domainText);
+					let colour : string = that.rectColourMap.get(domainText.replace("&#x000A",'\n'));
 					let indexAndDomainTextAndColour : string = index + ',' + domainText + ',' + colour;
 					console.log(indexAndDomainTextAndColour);
 					that.router.navigate(['/detail',indexAndDomainTextAndColour, that.projectPath]);
@@ -1178,19 +1169,19 @@ export class MainboardComponent implements OnInit {
 		// 	addedConstraints = addedConstraints + newClockConstraints[i] + '//';
 		// }
 		console.log(str);
-		this.service.exportConstraints(this.projectPath,str,addedConstraints);
-		alert('success');
+		this.service.exportConstraints(str,addedConstraints, this.cookieService.get('branch'));
+		alert('Success And Saved');
 	}
 
 	downloadConstraints(){
-		window.open('http://localhost:8090/client/downloadMyCCSLFile?path=' + this.projectPath);
-		//window.open('http://47.52.116.116:8090/client/downloadMyCCSLFile');
+		//window.open('http://localhost:8090/client/downloadMyCCSLFile');
+		window.open('http://47.52.116.116:8090/client/downloadMyCCSLFile');
 	}
 	
 
 	downloadTool(){
-		window.open('http://localhost:8090/client/downloadMyCCSLTool');
-		//window.open('http://47.52.116.116:8090/client/downloadMyCCSLTool');
+		//window.open('http://localhost:8090/client/downloadMyCCSLTool');
+		window.open('http://47.52.116.116:8090/client/downloadMyCCSLTool');
 	}
 	
 
@@ -1226,7 +1217,7 @@ export class MainboardComponent implements OnInit {
 	}
 
 	ruleBasedCheck(){
-		this.service.ruleBasedCheck(this.projectPath).subscribe(data => {
+		this.service.ruleBasedCheck().subscribe(data => {
 			if(data["circle"] === '') return;
 			let circle = data["circle"];
 			let circles : Array<string> = circle.split(';');

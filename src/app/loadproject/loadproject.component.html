@@ -5,9 +5,9 @@
   </div> 
   <div class="showPro">
    <form id="op">
-    <ul *ngFor="let folder of folderlist">
-     <li [class.selected]="selectedFolder===folder" (click)="gerVersionList(folder)">{{folder}}
-      <ul *ngIf="folder === selectedFolder">
+    <ul *ngFor="let branch of branchList">
+     <li [class.selected]="selectedBranch===branch" (click)="gerVersionList(branch)">{{branch}}
+      <ul *ngIf="branch === selectedBranch">
        <li *ngFor="let version of versionlist"><label><input type="radio" name="project" id="version" value="{{version}}">{{version}}</label></li>
       </ul>
      </li>

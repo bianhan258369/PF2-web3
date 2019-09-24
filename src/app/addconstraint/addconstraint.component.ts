@@ -36,7 +36,7 @@ export class AddconstraintComponent implements OnInit {
   getInteractions() : void{
     let index = +this.route.snapshot.paramMap.get('index'); 
     let projectPath = this.route.snapshot.paramMap.get('projectPath');
-    this.service.getInteractions(projectPath,index).subscribe(data =>{
+    this.service.getInteractions(index).subscribe(data =>{
       this.interactions = data;
       this.cons = 'StrictPre';
       this.fromInt = this.interactions[0].number + ',' + this.interactions[0].state;
@@ -48,7 +48,7 @@ export class AddconstraintComponent implements OnInit {
         let index = constraints[i].substring(0,constraints[i].indexOf(':'));
 					let constraint : string[] = (constraints[i].substring(1 + constraints[i].indexOf(':'))).split(' ');
 					let tempCons : string = constraint[1];
-          if(tempCons === 'BoundedDiff' || tempCons ==='Sup' || tempCons === 'Union' || tempCons === 'Inf'){
+          if(tempCons ==='Sup' || tempCons === 'Union' || tempCons === 'Inf'){
             let extra = constraint[3];
             $("#from").append('<option value="'+extra+'">' + extra + '</option>');
             $("#to").append('<option value="'+extra+'">' + extra + '</option>');
@@ -60,7 +60,6 @@ export class AddconstraintComponent implements OnInit {
   checkCons(){
     let index = +this.route.snapshot.paramMap.get('index'); 
     let projectPath = this.route.snapshot.paramMap.get('projectPath');
-
     if(!this.fromInt.includes(',')){
       if(this.cons === 'BoundedDiff'){
         if(isNaN(+this.boundedFrom) || isNaN(+this.boundedTo) || +this.boundedFrom >= +this.boundedTo){
@@ -155,7 +154,7 @@ export class AddconstraintComponent implements OnInit {
 
     else{
       if(this.cons === "StrictPre" || this.cons === 'nStrictPre'){
-        this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,null,null).subscribe(data => {
+        this.service.canAddConstraint(index, this.fromInt,this.toInt,this.cons,null,null).subscribe(data => {
           this.canAdd = data;
           if(!this.canAdd){
             this.location.back();
@@ -181,7 +180,7 @@ export class AddconstraintComponent implements OnInit {
           alert("Error Parameters");
         }
         else{
-          this.service.canAddConstraint(projectPath,index, this.fromInt,this.toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
+          this.service.canAddConstraint(index, this.fromInt,this.toInt,this.cons,this.boundedFrom,this.boundedTo).subscribe(data => {
             this.canAdd = data;
             if(!this.canAdd){
               this.location.back();

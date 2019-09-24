@@ -207,6 +207,8 @@
 	overflow-x:auto; */
 	white-space: nowrap;
 	color:white;
+	overflow-x:auto;
+    overflow-y:auto;
 }
 #rightbar button{
 	position: relative;

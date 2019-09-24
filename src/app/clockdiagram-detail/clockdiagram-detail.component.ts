@@ -69,7 +69,7 @@ export class ClockdiagramDetailComponent implements OnInit {
     let domainText : string = splitted[1];
     this.colour = splitted[2];
     domainText = domainText.replace("&","%26");
-    this.service.getScenarioDiagramByDomainText(projectPath, index, domainText).subscribe(data=>{
+    this.service.getScenarioDiagramByDomainText(index, domainText).subscribe(data=>{
       this.scenarioDiagram = data;
     });
   }
@@ -79,7 +79,7 @@ export class ClockdiagramDetailComponent implements OnInit {
     let indexAndDomainTextAndColour : string = this.route.snapshot.paramMap.get('indexAndDomainTextAndColour');
     let splitted = indexAndDomainTextAndColour.split(',');
     let index : number = +splitted[0];
-    this.service.getPhenomenonList(projectPath,index).subscribe(phe => {
+    this.service.getPhenomenonList(index).subscribe(phe => {
       this.phenomena = phe;
     })
   }

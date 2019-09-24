@@ -12,14 +12,12 @@
     <li *ngIf="step === 6" class="topbarMenu" id="AddConstraint" (click) = "showConstraintDialog()">Add Constraint</li>
     <li *ngIf="step !== 6" class="cannotTopbarMenu" id="CannotAddConstraint" disabled="disabled">Add Constraint</li>
     <li *ngIf="step >= 6" class="topbarMenu" id="Save" (click) = "saveConstraintsTxt()">Save</li>
-    <li *ngIf="6 > step" class="cannotTopbarMenu" id="CannotSave" (click) = "saveConstraintsTxt()" disabled="disabled">Save</li>
+    <li *ngIf="6 > step" class="cannotTopbarMenu" id="CannotSave"  disabled="disabled">Save</li>
     <li *ngIf="step >= 7" class="topbarMenu" id="DownloadConstraints" (click) = "downloadConstraints()">DownloadCons</li>
-    <li *ngIf="7 > step" class="cannotTopbarMenu" id="CannotDownloadConstraints" (click) = "downloadConstraints()" disabled="disabled">DownloadCons</li>
+    <li *ngIf="7 > step" class="cannotTopbarMenu" id="CannotDownloadConstraints"  disabled="disabled">DownloadCons</li>
     <li *ngIf="step === 8" class="topbarMenu" id="SemanticCheck" (click) = "showZ3Panel()">Semantics Check</li>
-    <li *ngIf="step !== 8" class="cannotTopbarMenu" id="CannotSemanticCheck" (click) = "showZ3Panel()" disabled="disabled">Semantics Check</li>
+    <li *ngIf="step !== 8" class="cannotTopbarMenu" id="CannotSemanticCheck"  disabled="disabled">Semantics Check</li>
     <li class="topbarMenu" id="help"></li>	
-    <li *ngIf="step === 9" class="topbarMenu" id="nextMainStep" (click) = "nextMainStep()">Next Main Step</li>
-    <li *ngIf="step !== 9" class="cannotTopbarMenu" id="CannotnextMainStep" disabled="disabled" (click) = "nextMainStep()">Next Main Step</li>
     <!-- <div *ngIf="step >= 8" id="z3Result">waiting......</div>	 -->
   </ul>
   </nav>

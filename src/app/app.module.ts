@@ -16,7 +16,6 @@ import { HelpComponent } from './help/help.component';
 import { FormsModule } from '@angular/forms';
 import { MainboardComponent } from './mainboard/mainboard.component';
 import { LoadprojectComponent } from './loadproject/loadproject.component';
-import { Z3checkComponent } from './z3check/z3check.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +25,6 @@ import { Z3checkComponent } from './z3check/z3check.component';
     HelpComponent,
     MainboardComponent,
     LoadprojectComponent,
-    Z3checkComponent,
   ],
   imports: [
     BrowserModule,
