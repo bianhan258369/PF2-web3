@@ -1,4 +1,4 @@
-div{
+#addConstraint div{
 	background:white;
 	position: absolute;
 	top:43%;
@@ -7,7 +7,7 @@ div{
 	height:20%;
 	float: center;
 }
-.ExtraInput{
+#addConstraint .ExtraInput{
 	width: 60px;
 	box-sizing:border-box;
 	padding: 5px;
